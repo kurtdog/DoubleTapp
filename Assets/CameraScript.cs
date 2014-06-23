@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class CameraScript : MonoBehaviour {
 
+	public GameObject ShooterShip;
 	public GameObject ViewPointNetwork;
 	public List<GameObject> viewpointObjects;
 	public Viewpoint viewpoint;
@@ -20,21 +21,50 @@ public class CameraScript : MonoBehaviour {
 			viewpointObjects.Add(child.gameObject);
 		}
 		lastViewpoint = viewpoint;
-		SwitchViewPoints(Viewpoint.top); // switch to our selected viewpoint
+		SwitchViewPoints(viewpoint); // switch to our selected viewpoint
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+
 		if(lastViewpoint != viewpoint)
 		{	
+			lastViewpoint = viewpoint;
 			SwitchViewPoints(viewpoint);
+
 		}
+
+		HandleInput();
+
 	}
 
+	void HandleInput()
+	{
+		if(Input.GetKeyDown(KeyCode.Z))
+		{
+			viewpoint = Viewpoint.sideL;
+		}
+		if(Input.GetKeyDown(KeyCode.X))
+		{
+			viewpoint = Viewpoint.top;
+		}
+		if(Input.GetKeyDown(KeyCode.C))
+		{
+			viewpoint = Viewpoint.sideR;
+		}
+		if(Input.GetKeyDown(KeyCode.V))
+		{
+			viewpoint = Viewpoint.thirdPerson;
+		}
+
+
+
+	}
 
 	void SwitchViewPoints(Viewpoint vp)
 	{
+		Debug.Log("Switchin to vp: " + vp);
 		foreach(Transform child in ViewPointNetwork.transform)
 		{
 			ViewPointScript childViewpointScript = child.gameObject.GetComponent<ViewPointScript>();
@@ -42,7 +72,7 @@ public class CameraScript : MonoBehaviour {
 			{
 				if(childViewpointScript.viewPoint == vp)
 				{
-
+					Debug.Log("Moving camera to " + child.gameObject.name);
 					MoveCamera(child.gameObject);
 					transitioning = true;
 
@@ -59,7 +89,13 @@ public class CameraScript : MonoBehaviour {
 		//adjust rotation
 		this.transform.rotation = go.transform.rotation;
 		//this.transform.eulerAngles = Vector3.Lerp(this.transform.eulerAngles,go.eulerAngles,Time.fixedDeltaTime*adjustmentSpeed);
-
+		if(viewpoint == Viewpoint.thirdPerson)
+		{
+			//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
+		}
+	
+			
+	
 
 
 		//adjust position

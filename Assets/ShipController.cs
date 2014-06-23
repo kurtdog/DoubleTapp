@@ -12,6 +12,7 @@ public class ShipController : MonoBehaviour {
 	public float currentSpeed;
 	public float fireRate;
 	public float turnSpeed;
+	public float rotationSlow;
 	public ShipType shipType;
 	public enum ShipType{Shooter,Shield};
 	
@@ -72,6 +73,11 @@ public class ShipController : MonoBehaviour {
 				bullet.rigidbody.AddForce(f);
 				projectiles.Add(bullet);
 			}
+		}
+		if(Input.GetButton("Thrust"))
+		{
+			this.rigidbody.AddForce(this.transform.forward*acceleration);
+
 		}
 		
 	}
@@ -134,7 +140,13 @@ public class ShipController : MonoBehaviour {
 		if(rigidbody.velocity.magnitude > .1f)
 		{
 			rigidbody.AddForce(-rigidbody.velocity*acceleration*Time.fixedDeltaTime);
-			Debug.Log(shipType.ToString() +" slowing down");
+			//Debug.Log(shipType.ToString() +" slowing down");
+		}
+
+		if(rigidbody.angularVelocity.magnitude > .1f)
+		{
+			rigidbody.AddTorque(-rigidbody.angularVelocity*rotationSlow*Time.fixedDeltaTime);
+			Debug.Log("adding torque:");
 		}
 	}
 
