@@ -29,22 +29,26 @@ public class ShipController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		shotTimer += Time.fixedDeltaTime;
+	public void Update () {
 
+		CallUpdateEvents();
+
+	}
+
+	public void CallUpdateEvents()
+	{
+		shotTimer += Time.fixedDeltaTime;
+		//LockRotation();
 		GetKeyInput(); // take action on button press events
 		GetAxisInput(); //get the axis information, joystick controls
+		HandleControls();
 
+	}
 
-		switch(cameraScript.viewpoint)
-		{
-		case Viewpoint.top:
-			HandleTopControls();
-			break;
-		default:
-			break;
+	void LockRotation()
+	{
+		//lock the rotation of this object. we don
 
-		}
 	}
 
 	//Button Press Events
@@ -80,7 +84,8 @@ public class ShipController : MonoBehaviour {
 			xJoystick = Input.GetAxis("Horizontal1");
 			yJoystick = Input.GetAxis("Vertical1");
 		}
-		else{
+		else if(shipType == ShipType.Shield)
+		{
 			xJoystick = Input.GetAxis("Horizontal2");
 			yJoystick = Input.GetAxis("Vertical2");
 		}
@@ -88,10 +93,16 @@ public class ShipController : MonoBehaviour {
 
 	//restrict movement in the Z axis
 	//controls act as an arcade style 2D game in this mode
-	void HandleTopControls()
+	void HandleControls()
 	{
 		currentSpeed = rigidbody.velocity.magnitude; // view the velocity in the inspector
-		Vector3 force = new Vector3(xJoystick,yJoystick,0)*acceleration*Time.fixedDeltaTime;
+		Vector3 force = new Vector3(0,0,0);
+
+		//instead of case based movement we want to always move the ship based on the camera, right, left, up down, it's always from the camera's perspective
+		Vector3 MovementVector = camera.transform.right*xJoystick + camera.transform.up*yJoystick;
+
+
+		force = MovementVector*acceleration*Time.fixedDeltaTime;
 		
 		// if we're giving input
 		if(xJoystick != 0.0f || yJoystick != 0.0f) 
@@ -113,13 +124,19 @@ public class ShipController : MonoBehaviour {
 		//otherwise
 		else{
 			//slow down the ship
-			if(rigidbody.velocity.magnitude > .1f)
-			{
-				rigidbody.AddForce(-rigidbody.velocity*acceleration*Time.fixedDeltaTime);
-				Debug.Log(shipType.ToString() +" slowing down");
-			}
+			SlowDown();
 		}
-
-
 	}
+
+
+	void SlowDown()
+	{
+		if(rigidbody.velocity.magnitude > .1f)
+		{
+			rigidbody.AddForce(-rigidbody.velocity*acceleration*Time.fixedDeltaTime);
+			Debug.Log(shipType.ToString() +" slowing down");
+		}
+	}
+
+
 }
