@@ -46,9 +46,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AsteroidBeltSc.cs" />
+     <Compile Include="Assets\AsteroidFieldSc.cs" />
      <Compile Include="Assets\CameraScript.cs" />
      <Compile Include="Assets\EmitParticles.cs" />
      <Compile Include="Assets\GenerateStars.cs" />
+     <Compile Include="Assets\LockWheelSc.cs" />
      <Compile Include="Assets\ParticleCollider.cs" />
      <Compile Include="Assets\Projectile.cs" />
      <Compile Include="Assets\RotateStars.cs" />

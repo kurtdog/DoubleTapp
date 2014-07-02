@@ -41,19 +41,19 @@ public class CameraScript : MonoBehaviour {
 
 	void HandleInput()
 	{
-		if(Input.GetKeyDown(KeyCode.Z))
+		if(Input.GetButtonDown("Left"))
 		{
 			viewpoint = Viewpoint.sideL;
 		}
-		if(Input.GetKeyDown(KeyCode.X))
+		if(Input.GetButtonDown("Top"))
 		{
 			viewpoint = Viewpoint.top;
 		}
-		if(Input.GetKeyDown(KeyCode.C))
+		if(Input.GetButtonDown("Right"))
 		{
 			viewpoint = Viewpoint.sideR;
 		}
-		if(Input.GetKeyDown(KeyCode.V))
+		if(Input.GetButtonDown("3rdPerson"))
 		{
 			viewpoint = Viewpoint.thirdPerson;
 		}

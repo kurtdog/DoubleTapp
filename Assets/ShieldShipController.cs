@@ -1,34 +1,68 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShieldShipController : ShipController {
+public class ShieldShipController : MonoBehaviour {
 
 	public GameObject ShooterShip;
-	public float distFromShooter;
-	public float adjustmentSpeed;
+	public GameObject LockWheel;
+	public GameObject camera;
+	public float rotationSpeed;
+	public float angle;
+	ShipController shipController;
+	LockWheelSc lockWheel;
+	CameraScript cameraScript;
+
+	public float xJoystick;
+	public float yJoystick;
+	private float radius;
 
 	// Use this for initialization
 	void Start () {
 	
+		shipController = ShooterShip.GetComponent<ShipController>();
+		lockWheel = LockWheel.GetComponent<LockWheelSc>();
+		cameraScript = camera.GetComponent<CameraScript>();
+		angle = 0;
+		radius = lockWheel.radius;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		CallUpdateEvents();
+		HandleInput();
 	}
 
-	//align this ship to the same z distance away from the camera's perspective
-	void AlignShips()
+
+	void HandleInput()
 	{
-		//Lerp Position
-		Vector3 OptimalShieldPosition = ShooterShip.transform.position + (ShooterShip.transform.forward*this.transform.lossyScale.x*distFromShooter);
-		if(this.transform.position.z != OptimalShieldPosition.z)
+		xJoystick = Input.GetAxis("Horizontal2");
+		yJoystick = -Input.GetAxis("Vertical2");
+
+		angle += xJoystick*rotationSpeed;
+		float deg = Mathf.Deg2Rad * angle;
+
+
+		Vector3 position = new Vector3(0,0,0);
+
+		//Make this based on the camera
+
+		if((cameraScript.viewpoint == Viewpoint.sideL) || (cameraScript.viewpoint == Viewpoint.sideR))
 		{
-			Debug.Log("AlligningShips");
-			this.transform.position = Vector3.Lerp(this.transform.position,OptimalShieldPosition,Time.fixedDeltaTime*adjustmentSpeed);
+			position.y = Mathf.Sin (deg) * radius ;
+			position.z = Mathf.Cos (deg) * radius;
+			position.x = 0;
+		}
+		else{
+			position.x = Mathf.Cos (deg) * radius;
+			position.y = 0 ;
+			position.z = Mathf.Sin (deg) * radius;
 		}
 
-		//Lerp Rotation
+		Debug.Log("Shooter Pos: " + ShooterShip.transform.position);
+		Debug.Log("Shield Pos: " + position);
+		this.transform.localPosition = position;
+		//this.transform.Rotate(lockWheel.transform.up,xJoystick*rotationSpeed*Time.fixedDeltaTime);
 
 	}
+
+
 }

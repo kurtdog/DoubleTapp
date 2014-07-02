@@ -12,8 +12,11 @@ public class ShipController : MonoBehaviour {
 	public float currentSpeed;
 	public float fireRate;
 	public float turnSpeed;
+	public float twoDspeed;
 	public float rotationSlow;
-	public ShipType shipType;
+	public float rotationSpeed;
+
+	//public ShipType shipType;
 	public enum ShipType{Shooter,Shield};
 	
 	public float xJoystick;
@@ -41,7 +44,6 @@ public class ShipController : MonoBehaviour {
 		shotTimer += Time.fixedDeltaTime;
 		//LockRotation();
 		GetKeyInput(); // take action on button press events
-		GetAxisInput(); //get the axis information, joystick controls
 		HandleControls();
 
 	}
@@ -57,73 +59,79 @@ public class ShipController : MonoBehaviour {
 	{
 		if(Input.GetButtonDown("Fire1") && shotTimer > fireRate)
 		{
-			Debug.Log("shooting");
+			//Debug.Log("shooting");
 			shotTimer = 0;
-			if(shipType == ShipType.Shooter)
-			{
-				GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
+		
+			GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
 
-				
-				Debug.Log("speed: " + bullet.GetComponent<Projectile>().speed);
-				Debug.Log("forward: " + transform.forward);
-				
-				Vector3 f = this.transform.forward*bullet.GetComponent<Projectile>().speed;
-				//bullet.GetComponent<Projectile>().force = f;
-				Debug.Log("adding force f: " + f);
-				bullet.rigidbody.AddForce(f);
-				projectiles.Add(bullet);
-			}
+			
+			//Debug.Log("speed: " + bullet.GetComponent<Projectile>().speed);
+			//Debug.Log("forward: " + transform.forward);
+			
+			Vector3 f = this.transform.forward*(bullet.GetComponent<Projectile>().speed +  this.rigidbody.velocity.magnitude);
+			//bullet.GetComponent<Projectile>().force = f;
+			//Debug.Log("adding force f: " + f);
+			bullet.rigidbody.AddForce(f);
+			projectiles.Add(bullet);
+
 		}
-		if(Input.GetButton("Thrust"))
+		//Input.GetAxis("Thrust");
+		// < 0 is Left Trigger
+		// > 0 is Right Trigger
+		if(Input.GetAxis("Thrust") < 0)
 		{
-			this.rigidbody.AddForce(this.transform.forward*acceleration);
+			this.rigidbody.AddForce(this.transform.forward*acceleration*-Input.GetAxis("Thrust"));
 
 		}
+		//iff pressing back, and thrust, move backwards
+		if(Input.GetButton("Thrust") && xJoystick < 0)
+		{
+			this.rigidbody.AddForce(-this.transform.forward*acceleration);
+		}
+
 		
 	}
 
-	void GetAxisInput()
-	{
-		//depending on ship type, get the joystick input for this ship
-		if(shipType == ShipType.Shooter)
-		{
-			xJoystick = Input.GetAxis("Horizontal1");
-			yJoystick = Input.GetAxis("Vertical1");
-		}
-		else if(shipType == ShipType.Shield)
-		{
-			xJoystick = Input.GetAxis("Horizontal2");
-			yJoystick = Input.GetAxis("Vertical2");
-		}
-	}
+
 
 	//restrict movement in the Z axis
 	//controls act as an arcade style 2D game in this mode
 	void HandleControls()
 	{
+		xJoystick = Input.GetAxis("Horizontal1");
+		yJoystick = Input.GetAxis("Vertical1");
+
+
 		currentSpeed = rigidbody.velocity.magnitude; // view the velocity in the inspector
 		Vector3 force = new Vector3(0,0,0);
 
-		//instead of case based movement we want to always move the ship based on the camera, right, left, up down, it's always from the camera's perspective
-		Vector3 MovementVector = camera.transform.right*xJoystick + camera.transform.up*yJoystick;
-
-
-		force = MovementVector*acceleration*Time.fixedDeltaTime;
-		
 		// if we're giving input
-		if(xJoystick != 0.0f || yJoystick != 0.0f) 
+		if(Mathf.Abs(xJoystick) > 0.4f || Mathf.Abs(yJoystick) > 0.4f ) 
 		{
-			//addforce
-			if(currentSpeed < maxSpeed)
+
+			//in third person View, fly around, rotate the ship, move freely in 3D space
+			if(cameraScript.viewpoint == Viewpoint.thirdPerson)
 			{
+				//addtorque
+				if(currentSpeed < maxSpeed)
+				{
+					//rigidbody.AddForce(force);
+
+					Vector3 torqueVector = this.transform.right*yJoystick*rotationSpeed; //flip
+					rigidbody.AddTorque(torqueVector);
+
+					torqueVector = this.transform.forward*-xJoystick*rotationSpeed; // barrel roll
+					rigidbody.AddTorque(torqueVector);
+
+				}
+			}
+			//otherwise we want 2D movement
+			else{
+				//instead of case based movement we want to always move the ship based on the camera, right, left, up down, it's always from the camera's perspective
+				Vector3 MovementVector = camera.transform.right*xJoystick + camera.transform.up*yJoystick;
+				force = MovementVector*twoDspeed*Time.fixedDeltaTime;
 				rigidbody.AddForce(force);
-				//rigidbody.AddTorque(new Vector3(xJoystick*turnSpeed,0,0));
-				// W key or the up arrow to turn upwards, S or the down arrow to turn downwards.
-				//rigidbody.AddTorque (new Vector3(0,yJoystick*turnSpeed,0));
-				// A or left arrow to turn left, D or right arrow to turn right. 
-				//float angle = Vector2.Angle(movingDirection,new Vector2(transform.forward.x,transform.forward.y));
-				///transform.Rotate(new Vector3(0,0,1), angle);
-				//Debug.Log(shipType.ToString() +" force: " + force);
+
 			}
 			//rotate ship
 		}
@@ -146,7 +154,7 @@ public class ShipController : MonoBehaviour {
 		if(rigidbody.angularVelocity.magnitude > .1f)
 		{
 			rigidbody.AddTorque(-rigidbody.angularVelocity*rotationSlow*Time.fixedDeltaTime);
-			Debug.Log("adding torque:");
+			//Debug.Log("adding torque:");
 		}
 	}
 
