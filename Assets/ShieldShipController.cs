@@ -34,18 +34,23 @@ public class ShieldShipController : MonoBehaviour {
 
 	void HandleInput()
 	{
-		xJoystick = Input.GetAxis("Horizontal2");
-		yJoystick = -Input.GetAxis("Vertical2");
 
-		angle += xJoystick*rotationSpeed;
+		if(Input.GetButton("MoveShieldLeft"))
+		{
+			angle += rotationSpeed;
+		}
+		if(Input.GetButton("MoveShieldRight"))
+		{
+			angle -= rotationSpeed;
+		}
+	
 		float deg = Mathf.Deg2Rad * angle;
-
-
+		
 		Vector3 position = new Vector3(0,0,0);
-
+		
 		//Make this based on the camera
-
-		if((cameraScript.viewpoint == Viewpoint.sideL) || (cameraScript.viewpoint == Viewpoint.sideR))
+		
+		if((cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint == Viewpoint.sideL) || (cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint == Viewpoint.sideR))
 		{
 			position.y = Mathf.Sin (deg) * radius ;
 			position.z = Mathf.Cos (deg) * radius;
@@ -57,10 +62,17 @@ public class ShieldShipController : MonoBehaviour {
 			position.z = Mathf.Sin (deg) * radius;
 		}
 
-		Debug.Log("Shooter Pos: " + ShooterShip.transform.position);
-		Debug.Log("Shield Pos: " + position);
+		//Debug.Log("Shooter Pos: " + ShooterShip.transform.position);
+		//Debug.Log("Shield Pos: " + position);
 		this.transform.localPosition = position;
 		//this.transform.Rotate(lockWheel.transform.up,xJoystick*rotationSpeed*Time.fixedDeltaTime);
+
+	}
+
+	void JoystickControls()
+	{
+
+		
 
 	}
 

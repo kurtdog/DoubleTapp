@@ -16,7 +16,7 @@ public class ParticleCollider : MonoBehaviour {
 
 	void OnParticleCollision(GameObject other) {
 		Rigidbody body = other.rigidbody;
-		Debug.Log("Collision");
+		//Debug.Log("Collision");
 		/*
 		if (body) {
 			Vector3 direction = other.transform.position - transform.position;

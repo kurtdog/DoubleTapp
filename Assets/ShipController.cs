@@ -16,6 +16,8 @@ public class ShipController : MonoBehaviour {
 	public float rotationSlow;
 	public float rotationSpeed;
 
+	public float joystickThreshold;
+
 	//public ShipType shipType;
 	public enum ShipType{Shooter,Shield};
 	
@@ -57,31 +59,24 @@ public class ShipController : MonoBehaviour {
 	//Button Press Events
 	void GetKeyInput()
 	{
+		/*
 		if(Input.GetButtonDown("Fire1") && shotTimer > fireRate)
 		{
-			//Debug.Log("shooting");
-			shotTimer = 0;
-		
-			GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
-
-			
-			//Debug.Log("speed: " + bullet.GetComponent<Projectile>().speed);
-			//Debug.Log("forward: " + transform.forward);
-			
-			Vector3 f = this.transform.forward*(bullet.GetComponent<Projectile>().speed +  this.rigidbody.velocity.magnitude);
-			//bullet.GetComponent<Projectile>().force = f;
-			//Debug.Log("adding force f: " + f);
-			bullet.rigidbody.AddForce(f);
-			projectiles.Add(bullet);
-
+			Shoot();
 		}
+		*/
 		//Input.GetAxis("Thrust");
 		// < 0 is Left Trigger
 		// > 0 is Right Trigger
-		if(Input.GetAxis("Thrust") < 0)
-		{
-			this.rigidbody.AddForce(this.transform.forward*acceleration*-Input.GetAxis("Thrust"));
 
+		if(Input.GetAxis("Thrust") > 0)//rightTrigger
+		{
+			this.rigidbody.AddForce(this.transform.forward*acceleration*Input.GetAxis("Thrust"));
+
+		}
+		if(Input.GetAxis("Thrust") < 0 && shotTimer > fireRate)//leftTrigger
+		{
+			Shoot();
 		}
 		//iff pressing back, and thrust, move backwards
 		if(Input.GetButton("Thrust") && xJoystick < 0)
@@ -93,7 +88,24 @@ public class ShipController : MonoBehaviour {
 	}
 
 
-
+	void Shoot()
+	{
+		//Debug.Log("shooting");
+		shotTimer = 0;
+		
+		GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
+		
+		
+		//Debug.Log("speed: " + bullet.GetComponent<Projectile>().speed);
+		//Debug.Log("forward: " + transform.forward);
+		
+		Vector3 f = this.transform.forward*(bullet.GetComponent<Projectile>().speed +this.rigidbody.velocity.magnitude);
+		//bullet.GetComponent<Projectile>().force = f;
+		//Debug.Log("adding force f: " + f);
+		bullet.rigidbody.AddForce(f);
+		//bullet.rigidbody.velocity = f;
+		projectiles.Add(bullet);
+	}
 	//restrict movement in the Z axis
 	//controls act as an arcade style 2D game in this mode
 	void HandleControls()
@@ -106,18 +118,18 @@ public class ShipController : MonoBehaviour {
 		Vector3 force = new Vector3(0,0,0);
 
 		// if we're giving input
-		if(Mathf.Abs(xJoystick) > 0.4f || Mathf.Abs(yJoystick) > 0.4f ) 
+		if(Mathf.Abs(xJoystick) > joystickThreshold || Mathf.Abs(yJoystick) > joystickThreshold ) 
 		{
 
 			//in third person View, fly around, rotate the ship, move freely in 3D space
-			if(cameraScript.viewpoint == Viewpoint.thirdPerson)
+			if(cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint == Viewpoint.thirdPerson)
 			{
 				//addtorque
 				if(currentSpeed < maxSpeed)
 				{
 					//rigidbody.AddForce(force);
 
-					Vector3 torqueVector = this.transform.right*yJoystick*rotationSpeed; //flip
+					Vector3 torqueVector = this.transform.right*-yJoystick*rotationSpeed; //flip
 					rigidbody.AddTorque(torqueVector);
 
 					torqueVector = this.transform.forward*-xJoystick*rotationSpeed; // barrel roll

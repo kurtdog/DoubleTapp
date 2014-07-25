@@ -104,10 +104,10 @@ public class LockWheelSc : MonoBehaviour {
 		float degPerLine = Mathf.Abs(endAngle - startAngle);
 		stepSize = (float)degPerLine/segPerLine;
 
-		Debug.Log("stepSize = " + stepSize);
-		Debug.Log(" segPerLine = " + segPerLine);
+		//Debug.Log("stepSize = " + stepSize);
+		//Debug.Log(" segPerLine = " + segPerLine);
 
-		Debug.Log("drawing arc from "+  startAngle + " to " + endAngle);
+		//Debug.Log("drawing arc from "+  startAngle + " to " + endAngle);
 		for (int i = 0; i < segPerLine; i++)
 		{
 			float deg = Mathf.Deg2Rad * angle;

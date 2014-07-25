@@ -6,105 +6,185 @@ public class CameraScript : MonoBehaviour {
 
 	public GameObject ShooterShip;
 	public GameObject ViewPointNetwork;
-	public List<GameObject> viewpointObjects;
-	public Viewpoint viewpoint;
-	private Viewpoint lastViewpoint;
+	public GameObject currentView;
 	public float adjustmentSpeed;
-	public bool transitioning = false;
+	public float movementSpeed;
+
+
+	private GameObject sideViewL;
+	private GameObject sideViewR;
+	private GameObject topView;
+	private GameObject thirdPersonView;
+	public bool invertedX;
+	public bool invertedY;
+	//public bool transitioning = false;
 
 	//public enum Viewpoint{top,sideR,sideL,thirdPerson,firstPerson};
+	float radiusFromShooter;
+	Vector3 offset;
 
 	// Use this for initialization
 	void Start () {
-		foreach(Transform child in ViewPointNetwork.transform)
-		{
-			viewpointObjects.Add(child.gameObject);
-		}
-		lastViewpoint = viewpoint;
-		SwitchViewPoints(viewpoint); // switch to our selected viewpoint
+		InitializeViewpointObjects();
+		radiusFromShooter = 1; //get a positionalOffset
+		offset = ShooterShip.transform.position - thirdPersonView.transform.position;
+		currentView = thirdPersonView;
+		SwitchViewPoints(currentView); // switch to our selected viewpoint
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+	
+		FollowShip();//follow the player's position
 
-		if(lastViewpoint != viewpoint)
-		{	
-			lastViewpoint = viewpoint;
-			SwitchViewPoints(viewpoint);
 
-		}
 
 		HandleInput();
 
 	}
-
-	void HandleInput()
-	{
-		if(Input.GetButtonDown("Left"))
+	//follow the player's position
+	void FollowShip()
+	{	
+		if(currentView = thirdPersonView)
 		{
-			viewpoint = Viewpoint.sideL;
+			transform.position = ShooterShip.transform.position - (Camera.main.transform.rotation * offset);
 		}
-		if(Input.GetButtonDown("Top"))
-		{
-			viewpoint = Viewpoint.top;
+		else{
+			transform.position = currentView.transform.position;
 		}
-		if(Input.GetButtonDown("Right"))
-		{
-			viewpoint = Viewpoint.sideR;
-		}
-		if(Input.GetButtonDown("3rdPerson"))
-		{
-			viewpoint = Viewpoint.thirdPerson;
-		}
-
-
 
 	}
 
-	void SwitchViewPoints(Viewpoint vp)
+
+	//Rotate towards thirdPersonView
+	void LerpRotation()
 	{
-		Debug.Log("Switchin to vp: " + vp);
+
+	}
+
+	//assign the viewpoints from the viewpointNetwork into our private viewpoint variables
+	void InitializeViewpointObjects()
+	{
 		foreach(Transform child in ViewPointNetwork.transform)
 		{
 			ViewPointScript childViewpointScript = child.gameObject.GetComponent<ViewPointScript>();
 			if( childViewpointScript != null)
 			{
-				if(childViewpointScript.viewPoint == vp)
+				if(childViewpointScript.viewPoint == Viewpoint.sideL)
 				{
-					Debug.Log("Moving camera to " + child.gameObject.name);
-					MoveCamera(child.gameObject);
-					transitioning = true;
-
+					sideViewL = child.gameObject;
+				}
+				if(childViewpointScript.viewPoint == Viewpoint.sideR)
+				{
+					sideViewR = child.gameObject;
+				}
+				if(childViewpointScript.viewPoint == Viewpoint.top)
+				{
+					topView = child.gameObject;
+				}
+				if(childViewpointScript.viewPoint == Viewpoint.thirdPerson)
+				{
+					thirdPersonView = child.gameObject;
 				}
 			}
 		}
 
 	}
 
-	//move the camera to align with the go's position and rotation
+	void HandleInput()
+	{
+
+		if(Input.GetButtonDown("Left"))
+		{
+			//viewpoint = Viewpoint.sideL;
+
+			currentView = sideViewL;
+			SwitchViewPoints(currentView);
+
+		}
+		if(Input.GetButtonDown("Top"))
+		{
+			//viewpoint = Viewpoint.top;
+			currentView = topView;
+			SwitchViewPoints(currentView);
+		}
+		if(Input.GetButtonDown("Right"))
+		{
+			//viewpoint = Viewpoint.sideR;
+			currentView = sideViewR;
+			SwitchViewPoints(currentView);
+		}
+		if(Input.GetButtonDown("3rdPerson"))
+		{
+			//viewpoint = Viewpoint.thirdPerson;
+			currentView = thirdPersonView;
+			SwitchViewPoints(currentView);
+		}
+
+		// move around the player in a unit sphere
+		if(currentView == thirdPersonView)
+		{
+			//Camera.main.transform.LookAt(ShooterShip.transform.position);
+			//currentView.transform.forward = (this.transform.position - ShooterShip.transform.position);
+
+			float xJoystick;// = -Input.GetAxis("Horizontal2");
+			float yJoystick;// = -Input.GetAxis("Vertical2");
+			if(invertedX)
+			{
+				xJoystick = Input.GetAxis("Horizontal2");
+			}
+			else{
+				xJoystick = -Input.GetAxis("Horizontal2");
+			}
+			if(invertedY)
+			{
+				yJoystick = Input.GetAxis("Vertical2");
+			}
+			else{
+				yJoystick = -Input.GetAxis("Vertical2");
+			}
+			
+			
+			Vector3 xAxis = currentView.transform.right;
+			Vector3 yAxis = currentView.transform.up;
+
+			if(Mathf.Abs(xJoystick) > .8f || Mathf.Abs(yJoystick) > .8f)
+			{
+				//Debug.Log("rotating x by : " + xJoystick*movementSpeed);
+				//Debug.Log("rotating y by : " + yJoystick*movementSpeed);
+				Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xJoystick*movementSpeed); // move the camera point
+				Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yJoystick*movementSpeed);
+				//currentView.transform.LookAt(ShooterShip.transform.position);//
+			
+			}
+			//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
+		}
+
+	}
+
+	void SwitchViewPoints(GameObject vp)
+	{
+		Debug.Log("Switchin vp to: " + vp.name);
+		this.transform.rotation = currentView.transform.rotation;
+		this.transform.position = currentView.transform.position;
+
+		/*
+
+		*/
+
+	}
+
+	/*
 	void MoveCamera(GameObject go)
 	{
 		//Debug.Log("setting position = " + go.position);
-		//adjust rotation
+		//adjust rotation and position
 		this.transform.rotation = go.transform.rotation;
-		//this.transform.eulerAngles = Vector3.Lerp(this.transform.eulerAngles,go.eulerAngles,Time.fixedDeltaTime*adjustmentSpeed);
-		if(viewpoint == Viewpoint.thirdPerson)
-		{
-			//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
-		}
-	
-			
-	
-
-
-		//adjust position
 		this.transform.position = go.transform.position;
-		//this.transform.position = Vector3.Lerp(this.transform.position,go.transform.position,Time.fixedDeltaTime*adjustmentSpeed);
-
 		transitioning = false;
 		
-	}
+	}*/
 	
 }
 

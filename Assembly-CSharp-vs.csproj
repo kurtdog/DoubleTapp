@@ -53,6 +53,7 @@
      <Compile Include="Assets\GenerateStars.cs" />
      <Compile Include="Assets\LockWheelSc.cs" />
      <Compile Include="Assets\ParticleCollider.cs" />
+     <Compile Include="Assets\ParticleShield.cs" />
      <Compile Include="Assets\Projectile.cs" />
      <Compile Include="Assets\RotateStars.cs" />
      <Compile Include="Assets\ShieldScript.cs" />
