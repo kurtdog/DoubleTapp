@@ -9,6 +9,7 @@ public class CameraScript : MonoBehaviour {
 	public GameObject currentView;
 	public float adjustmentSpeed;
 	public float movementSpeed;
+	public float lerpSpeed;
 
 
 	private GameObject sideViewL;
@@ -57,10 +58,34 @@ public class CameraScript : MonoBehaviour {
 	}
 
 
-	//Rotate towards thirdPersonView
+	//Slowly Lerp Back towards thirdPersonView
 	void LerpRotation()
 	{
+		//---------------Lerp Position
+		Vector3 xAxis = Camera.main.transform.right; //thirdPersonView
+		Vector3 yAxis = Camera.main.transform.up;
 
+		float xDistance = this.transform.position.x - ShooterShip.transform.localPosition.x;
+		float yDistance = this.transform.position.y - ShooterShip.transform.localPosition.y;
+
+
+		float threshold = 1;
+		if(Mathf.Abs(xDistance) > threshold || Mathf.Abs(yDistance) > threshold)
+		{
+			//Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xDistance*lerpSpeed); // move the camera point
+			//Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yDistance*lerpSpeed);
+		}
+		//-------------------Lerp Rotation
+		//rotate the up vector to match the ShooterShip's
+		int sign = 1;
+		if(this.transform.up.x < 0)
+		{
+			sign = -1;
+		}
+		float angle = sign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
+
+		Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
+		Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  Angle: " + angle);
 	}
 
 	//assign the viewpoints from the viewpointNetwork into our private viewpoint variables
@@ -146,8 +171,8 @@ public class CameraScript : MonoBehaviour {
 			}
 			
 			
-			Vector3 xAxis = currentView.transform.right;
-			Vector3 yAxis = currentView.transform.up;
+			Vector3 xAxis = Camera.main.transform.right;
+			Vector3 yAxis = Camera.main.transform.up;
 
 			if(Mathf.Abs(xJoystick) > .8f || Mathf.Abs(yJoystick) > .8f)
 			{
@@ -158,6 +183,9 @@ public class CameraScript : MonoBehaviour {
 				//currentView.transform.LookAt(ShooterShip.transform.position);//
 			
 			}
+			else{
+				LerpRotation();
+			}
 			//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
 		}
 
@@ -165,7 +193,7 @@ public class CameraScript : MonoBehaviour {
 
 	void SwitchViewPoints(GameObject vp)
 	{
-		Debug.Log("Switchin vp to: " + vp.name);
+		//Debug.Log("Switchin vp to: " + vp.name);
 		this.transform.rotation = currentView.transform.rotation;
 		this.transform.position = currentView.transform.position;
 

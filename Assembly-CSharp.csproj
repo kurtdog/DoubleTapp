@@ -51,6 +51,8 @@
      <Compile Include="Assets\CameraScript.cs" />
      <Compile Include="Assets\EmitParticles.cs" />
      <Compile Include="Assets\GenerateStars.cs" />
+     <Compile Include="Assets\LaserBeam.cs" />
+     <Compile Include="Assets\LaserScript.cs" />
      <Compile Include="Assets\LockWheelSc.cs" />
      <Compile Include="Assets\ParticleCollider.cs" />
      <Compile Include="Assets\ParticleShield.cs" />

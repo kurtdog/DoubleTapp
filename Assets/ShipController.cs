@@ -99,7 +99,7 @@ public class ShipController : MonoBehaviour {
 		//Debug.Log("speed: " + bullet.GetComponent<Projectile>().speed);
 		//Debug.Log("forward: " + transform.forward);
 		
-		Vector3 f = this.transform.forward*(bullet.GetComponent<Projectile>().speed +this.rigidbody.velocity.magnitude);
+		Vector3 f = this.transform.forward*(bullet.GetComponent<Projectile>().speed +Mathf.Abs(this.rigidbody.velocity.magnitude));
 		//bullet.GetComponent<Projectile>().force = f;
 		//Debug.Log("adding force f: " + f);
 		bullet.rigidbody.AddForce(f);
