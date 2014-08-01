@@ -6,11 +6,15 @@ public class LaserScript : MonoBehaviour
 	LineRenderer line;
 	public int length;
 	public float noise;
-	
+	//public Transform target; // moved to ship Controller
+	public GameObject ShooterShip;
+	ShipController shipController;
+
 	void Start () 
 	{
 		line = gameObject.GetComponent<LineRenderer>();
 		line.enabled = true; //false
+		shipController = this.GetComponent<ShipController>();
 
 	}
 	void Update () 
@@ -27,17 +31,18 @@ public class LaserScript : MonoBehaviour
 
 	public void FireLaser2()
 	{
-		Ray ray = new Ray(transform.position, transform.forward);
+		Ray ray = new Ray(ShooterShip.transform.position, transform.forward);
 		RaycastHit hit;
 		
-		line.SetPosition(0, ray.origin);
+		line.SetPosition(0, ShooterShip.transform.position); //ray.origin
 		
 		if(Physics.Raycast(ray, out hit, length))
 		{
 			line.SetPosition(1, hit.point);
-			if(hit.rigidbody)
+			if(!hit.collider.isTrigger && !shipController.lockedOn) //if we aren't locked on, look for a new target
 			{
 				//hit.rigidbody.AddForceAtPosition(transform.forward* 10, hit.point);
+				shipController.target = hit.transform;
 			}
 		}
 		else
@@ -45,6 +50,7 @@ public class LaserScript : MonoBehaviour
 		
 		//yield return null;
 	}
+	
 
 
 	IEnumerator FireLaser()

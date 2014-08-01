@@ -4,18 +4,26 @@ using System.Collections.Generic;
 
 public class CameraScript : MonoBehaviour {
 
+	public GameObject Ship;
 	public GameObject ShooterShip;
 	public GameObject ViewPointNetwork;
 	public GameObject currentView;
 	public float adjustmentSpeed;
 	public float movementSpeed;
 	public float lerpSpeed;
-
+	public float lerpTreshold;
 
 	private GameObject sideViewL;
 	private GameObject sideViewR;
 	private GameObject topView;
 	private GameObject thirdPersonView;
+	private ShipController shipController;
+	//in degrees
+	private float roll;
+	private float pitch;
+	private float yaw;
+	private float lastYaw;
+
 	public bool invertedX;
 	public bool invertedY;
 	//public bool transitioning = false;
@@ -31,6 +39,7 @@ public class CameraScript : MonoBehaviour {
 		offset = ShooterShip.transform.position - thirdPersonView.transform.position;
 		currentView = thirdPersonView;
 		SwitchViewPoints(currentView); // switch to our selected viewpoint
+		shipController = Ship.GetComponent<ShipController>();
 	}
 	
 	// Update is called once per frame
@@ -47,7 +56,7 @@ public class CameraScript : MonoBehaviour {
 	//follow the player's xyz position
 	void FollowShip()
 	{	
-		if(currentView = thirdPersonView)
+		if(currentView == thirdPersonView)
 		{
 			transform.position = ShooterShip.transform.position - (Camera.main.transform.rotation * offset);
 		}
@@ -61,34 +70,41 @@ public class CameraScript : MonoBehaviour {
 	//Slowly Lerp Back towards thirdPersonView
 	void LerpRotation()
 	{
-		
-		//-------------------Lerp Rotation
-		//rotate the up vector to match the ShooterShip's
-		Vector3 xAxis = Camera.main.transform.right; //thirdPersonView
-		Vector3 yAxis = Camera.main.transform.up;
-
-		float xDistance = this.transform.position.x - ShooterShip.transform.localPosition.x;
-		float yDistance = this.transform.position.y - ShooterShip.transform.localPosition.y;
-
-		int sign = 1;
+		int pitchSign = 1;
 		if(this.transform.up.x < 0)
 		{
-			sign = -1;
+			pitchSign = -1;
 		}
-		float angle = sign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
-		
-		Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
-		Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  Angle: " + angle);
-
-
-		float threshold = 1;
-		if(Mathf.Abs(xDistance) > threshold || Mathf.Abs(yDistance) > threshold)
+		int yawSign = 1;
+		if(this.transform.forward.x < 0)
 		{
-			//Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xDistance*lerpSpeed); // move the camera point
-			//Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yDistance*lerpSpeed);
+			yawSign = -1;
 		}
+		pitch = pitchSign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
+		yaw = yawSign*Vector3.Angle(ShooterShip.transform.forward,this.transform.forward);
 
+		//Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
+		//Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  upAngle: " + upAngle +" forwardAngle: " + forwardAngle);
+		//Debug.Log("pitch: " + pitch +" yaw: " + yaw + " DeltaYaw " + Mathf.Abs(yaw-lastYaw));
+
+
+
+		//stepSize
+		float step = lerpSpeed*Time.deltaTime;
+
+		if(Mathf.Abs(yaw-lastYaw) > lerpTreshold  ) //|| Mathf.Abs(yaw) > 5f
+		{
+			Vector3 newForward = Vector3.RotateTowards(this.transform.forward,ShooterShip.transform.forward,step,0.0f);
+			transform.rotation = Quaternion.LookRotation(newForward);
+			
+		}
+		if(Mathf.Abs(pitch) > lerpTreshold  )
+		{
+
+		}
+		lastYaw = yaw;
 	}
+
 
 	//assign the viewpoints from the viewpointNetwork into our private viewpoint variables
 	void InitializeViewpointObjects()
@@ -121,98 +137,111 @@ public class CameraScript : MonoBehaviour {
 
 	void HandleInput()
 	{
-
-		if(Input.GetButtonDown("Left"))
+		//Controls that can be done whenever------------------------------
+		if(Input.GetButtonDown("3rdPerson")) // switch to third person
 		{
-			//viewpoint = Viewpoint.sideL;
-
-			currentView = sideViewL;
-			SwitchViewPoints(currentView);
-
+			SwitchViewPoints(thirdPersonView);
 		}
-		if(Input.GetButtonDown("Top"))
+		//Controls that can be done when locked on------------------------------
+		if(shipController.lockedOn) 
 		{
-			//viewpoint = Viewpoint.top;
-			currentView = topView;
-			SwitchViewPoints(currentView);
-		}
-		if(Input.GetButtonDown("Right"))
-		{
-			//viewpoint = Viewpoint.sideR;
-			currentView = sideViewR;
-			SwitchViewPoints(currentView);
-		}
-		if(Input.GetButtonDown("3rdPerson"))
-		{
-			//viewpoint = Viewpoint.thirdPerson;
-			currentView = thirdPersonView;
-			SwitchViewPoints(currentView);
-		}
 
-		// move around the player in a unit sphere
-		if(currentView == thirdPersonView)
-		{
-			//Camera.main.transform.LookAt(ShooterShip.transform.position);
-			//currentView.transform.forward = (this.transform.position - ShooterShip.transform.position);
-
-			float xJoystick;// = -Input.GetAxis("Horizontal2");
-			float yJoystick;// = -Input.GetAxis("Vertical2");
-			if(invertedX)
+			//be able to switch viewpoints
+			if(Input.GetButtonDown("Left"))
 			{
-				xJoystick = Input.GetAxis("Horizontal2");
+				SwitchViewPoints(sideViewL);
 			}
-			else{
-				xJoystick = -Input.GetAxis("Horizontal2");
-			}
-			if(invertedY)
+			if(Input.GetButtonDown("Top"))
 			{
-				yJoystick = Input.GetAxis("Vertical2");
+				SwitchViewPoints(topView);
 			}
-			else{
-				yJoystick = -Input.GetAxis("Vertical2");
+			if(Input.GetButtonDown("Right"))
+			{
+				SwitchViewPoints(sideViewR);
 			}
-			
-			
-			Vector3 xAxis = Camera.main.transform.right;
-			Vector3 yAxis = Camera.main.transform.up;
 
-			if(Mathf.Abs(xJoystick) > .8f || Mathf.Abs(yJoystick) > .8f)
+
+			lockedOnCamera();
+		}
+		//Controls that can be done in thirdperson mode------------------------------
+		else{ // if not locked on, move to thirdpersonview
+			if(currentView != thirdPersonView)
 			{
-				//Debug.Log("rotating x by : " + xJoystick*movementSpeed);
-				//Debug.Log("rotating y by : " + yJoystick*movementSpeed);
-				Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xJoystick*movementSpeed); // move the camera point
-				Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yJoystick*movementSpeed);
-				//currentView.transform.LookAt(ShooterShip.transform.position);//
-			
+				currentView = thirdPersonView;
+				SwitchViewPoints(currentView);
 			}
-			else{
-				LerpRotation();
-			}
-			//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
+
+			thirdPersonCamera();
+		
 		}
 
+
+	}
+
+	void lockedOnCamera()
+	{
+		//Debug.Log("LockedOn Camera");
+		//adjust rotation and position
+		this.transform.rotation = currentView.transform.rotation;
+		this.transform.position = currentView.transform.position;
+		//transitioning = false;
+	}
+
+	void thirdPersonCamera()
+	{
+		//Debug.Log("ThirdPerson Camera");
+		//Camera.main.transform.LookAt(ShooterShip.transform.position);
+		//currentView.transform.forward = (this.transform.position - ShooterShip.transform.position);
+		
+		float xJoystick;// = -Input.GetAxis("Horizontal2");
+		float yJoystick;// = -Input.GetAxis("Vertical2");
+		if(invertedX)
+		{
+			xJoystick = Input.GetAxis("Horizontal2");
+		}
+		else{
+			xJoystick = -Input.GetAxis("Horizontal2");
+		}
+		if(invertedY)
+		{
+			yJoystick = Input.GetAxis("Vertical2");
+		}
+		else{
+			yJoystick = -Input.GetAxis("Vertical2");
+		}
+		
+		
+		Vector3 xAxis = Camera.main.transform.right;
+		Vector3 yAxis = Camera.main.transform.up;
+		
+		if(Mathf.Abs(xJoystick) > .8f || Mathf.Abs(yJoystick) > .8f)
+		{
+			//Debug.Log("rotating x by : " + xJoystick*movementSpeed);
+			//Debug.Log("rotating y by : " + yJoystick*movementSpeed);
+			Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xJoystick*movementSpeed); // move the camera point
+			Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yJoystick*movementSpeed);
+			//currentView.transform.LookAt(ShooterShip.transform.position);//
+			
+		}
+		else{
+			LerpRotation();
+		}
+		//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
 	}
 
 	void SwitchViewPoints(GameObject vp)
 	{
 		//Debug.Log("Switchin vp to: " + vp.name);
+		currentView = vp;
 		this.transform.rotation = currentView.transform.rotation;
 		this.transform.position = currentView.transform.position;
-
-		/*
-
-		*/
 
 	}
 
 	/*
 	void MoveCamera(GameObject go)
 	{
-		//Debug.Log("setting position = " + go.position);
-		//adjust rotation and position
-		this.transform.rotation = go.transform.rotation;
-		this.transform.position = go.transform.position;
-		transitioning = false;
+
 		
 	}*/
 	
