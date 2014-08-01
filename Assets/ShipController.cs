@@ -15,23 +15,38 @@ public class ShipController : MonoBehaviour {
 	public float twoDspeed;
 	public float rotationSlow;
 	public float rotationSpeed;
-
+	public bool invertX;
+	public bool invertY;
 	public float joystickThreshold;
 
 	//public ShipType shipType;
 	public enum ShipType{Shooter,Shield};
 	
-	public float xJoystick;
-	public float yJoystick;
+	private float xJoystick;
+	private float yJoystick;
+	private float xJoystick2;
 	
 	private List<GameObject> projectiles;
 	private float shotTimer;
-
+	int invX;
+	int invY;
 	CameraScript cameraScript;
 	// Use this for initialization
 	void Start () {
 		cameraScript = camera.GetComponent<CameraScript>();
 		projectiles = new List<GameObject>();
+
+		invX = 1;
+		invY = 1;
+		if(invertX)
+		{
+			invX = -1;
+		}
+		if(invertY)
+		{
+			invY = -1;
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -113,6 +128,8 @@ public class ShipController : MonoBehaviour {
 		xJoystick = Input.GetAxis("Horizontal1");
 		yJoystick = Input.GetAxis("Vertical1");
 
+		xJoystick2 = Input.GetAxis("Horizontal2");
+
 
 		currentSpeed = rigidbody.velocity.magnitude; // view the velocity in the inspector
 		Vector3 force = new Vector3(0,0,0);
@@ -127,12 +144,18 @@ public class ShipController : MonoBehaviour {
 				//addtorque
 				if(currentSpeed < maxSpeed)
 				{
+
+
 					//rigidbody.AddForce(force);
 
-					Vector3 torqueVector = this.transform.right*-yJoystick*rotationSpeed; //flip
+					Vector3 torqueVector = Camera.main.transform.right*invY*yJoystick*rotationSpeed; //flip
 					rigidbody.AddTorque(torqueVector);
 
-					torqueVector = this.transform.forward*-xJoystick*rotationSpeed; // barrel roll
+					torqueVector = Camera.main.transform.up*xJoystick*invX*rotationSpeed; // look left-right
+					rigidbody.AddTorque(torqueVector);
+
+
+					torqueVector = this.transform.forward*xJoystick*rotationSpeed; // barrel roll
 					rigidbody.AddTorque(torqueVector);
 
 				}

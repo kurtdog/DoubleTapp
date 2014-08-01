@@ -44,7 +44,7 @@ public class CameraScript : MonoBehaviour {
 		HandleInput();
 
 	}
-	//follow the player's position
+	//follow the player's xyz position
 	void FollowShip()
 	{	
 		if(currentView = thirdPersonView)
@@ -61,12 +61,24 @@ public class CameraScript : MonoBehaviour {
 	//Slowly Lerp Back towards thirdPersonView
 	void LerpRotation()
 	{
-		//---------------Lerp Position
+		
+		//-------------------Lerp Rotation
+		//rotate the up vector to match the ShooterShip's
 		Vector3 xAxis = Camera.main.transform.right; //thirdPersonView
 		Vector3 yAxis = Camera.main.transform.up;
 
 		float xDistance = this.transform.position.x - ShooterShip.transform.localPosition.x;
 		float yDistance = this.transform.position.y - ShooterShip.transform.localPosition.y;
+
+		int sign = 1;
+		if(this.transform.up.x < 0)
+		{
+			sign = -1;
+		}
+		float angle = sign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
+		
+		Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
+		Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  Angle: " + angle);
 
 
 		float threshold = 1;
@@ -75,17 +87,7 @@ public class CameraScript : MonoBehaviour {
 			//Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xDistance*lerpSpeed); // move the camera point
 			//Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yDistance*lerpSpeed);
 		}
-		//-------------------Lerp Rotation
-		//rotate the up vector to match the ShooterShip's
-		int sign = 1;
-		if(this.transform.up.x < 0)
-		{
-			sign = -1;
-		}
-		float angle = sign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
 
-		Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
-		Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  Angle: " + angle);
 	}
 
 	//assign the viewpoints from the viewpointNetwork into our private viewpoint variables

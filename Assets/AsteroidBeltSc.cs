@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AsteroidBeltSc : MonoBehaviour {
-
-	public GameObject Asteroid;
+	
 	public List<GameObject> asteroids;
+	public List<GameObject> spawnedObjects;
 	public int Spawn;
 	public float minSize;
 	public float maxSize;
@@ -22,7 +22,7 @@ public class AsteroidBeltSc : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		asteroids = new List<GameObject>();
+		spawnedObjects = new List<GameObject>();
 
 		SpawnAsteroids();
 	}
@@ -45,14 +45,14 @@ public class AsteroidBeltSc : MonoBehaviour {
 
 			//Quaternion randomRotation = Random.rotation;
 
-			GameObject ast = Instantiate(Asteroid,randomLocation,this.transform.rotation) as GameObject;
+			GameObject ast = Instantiate(GetRandomAsteroid(),randomLocation,this.transform.rotation) as GameObject;
 			ast.rigidbody.AddTorque(GetRandomTorque());
 			ast.transform.parent = this.transform;
 			float size = Random.Range(minSize,maxSize);
 			
 			ast.transform.localScale += new Vector3(size,size,size);
 			
-			asteroids.Add(ast);
+			spawnedObjects.Add(ast);
 		}
 		
 		this.transform.LookAt(upAxis);
@@ -67,5 +67,12 @@ public class AsteroidBeltSc : MonoBehaviour {
 		return new Vector3(torqueX,torqueY,torqueZ);
 	}
 
+
+	GameObject GetRandomAsteroid()
+	{
+		int index = Random.Range(0,asteroids.Count);
+		
+		return asteroids[index];
+	}
 
 }

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 public class AsteroidFieldSc : MonoBehaviour {
 
 
-	public GameObject Asteroid;
 	public List<GameObject> asteroids;
+	public List<GameObject> spawnedObjects;
 	public int Spawn;
 	public int radius;
 	public float minSize;
@@ -19,7 +19,7 @@ public class AsteroidFieldSc : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		asteroids = new List<GameObject>();
+		spawnedObjects = new List<GameObject>();
 		SpawnAsteroids();
 	}
 	
@@ -36,16 +36,24 @@ public class AsteroidFieldSc : MonoBehaviour {
 
 			Vector3 randomLocation = Random.insideUnitSphere*radius;
 			Quaternion randomRotation = Random.rotation;
-			GameObject ast = Instantiate(Asteroid,randomLocation,randomRotation) as GameObject;
+			GameObject ast = Instantiate(GetRandomAsteroid(),randomLocation,randomRotation) as GameObject;
 			ast.transform.parent = this.transform;
 			float size = Random.Range(minSize,maxSize);
 
 			ast.transform.localScale += new Vector3(size,size,size);
 
-			asteroids.Add(ast);
+			spawnedObjects.Add(ast);
 		}
 
 
+	}
+
+
+	GameObject GetRandomAsteroid()
+	{
+		int index = Random.Range(0,asteroids.Count);
+
+		return asteroids[index];
 	}
 
 
