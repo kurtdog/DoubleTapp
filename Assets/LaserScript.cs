@@ -6,6 +6,9 @@ public class LaserScript : MonoBehaviour
 	LineRenderer line;
 	public int length;
 	public float noise;
+	private Material originalMat;
+	public Material highLightMat;
+
 	//public Transform target; // moved to ship Controller
 	public GameObject ShooterShip;
 	ShipController shipController;
@@ -42,7 +45,15 @@ public class LaserScript : MonoBehaviour
 			if(!hit.collider.isTrigger && !shipController.lockedOn) //if we aren't locked on, look for a new target
 			{
 				//hit.rigidbody.AddForceAtPosition(transform.forward* 10, hit.point);
-				shipController.target = hit.transform;
+				if(shipController.target != null)
+				{
+					shipController.target.renderer.material = originalMat; // Unhighlight the last target
+				}
+				shipController.target = hit.transform; // target = new target
+				originalMat = shipController.target.renderer.material; // record the items original material
+				highLightMat.mainTexture = originalMat.mainTexture; // copy the texture
+				shipController.target.renderer.material = highLightMat; //highlight the new target //color higlight
+
 			}
 		}
 		else

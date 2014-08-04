@@ -10,9 +10,8 @@ public class ShipController : MonoBehaviour {
 	public GameObject ShooterShip;
 	public Transform target;
 	public float acceleration;
-	public float maxSpeed;
+	//public float maxSpeed;
 	public float currentSpeed;
-	public float spinSpeed;
 	public float fireRate;
 	public float turnSpeed;
 	public float twoDspeed;
@@ -67,9 +66,9 @@ public class ShipController : MonoBehaviour {
 
 		if(lockedOn)
 		{
-			if(target != null)
+			if(target != null) // if the target exists
 			{
-				this.transform.LookAt(target.transform.position);
+				this.transform.LookAt(target.transform.position); // lookAtit
 			}
 		}
 
@@ -112,7 +111,6 @@ public class ShipController : MonoBehaviour {
 		if(Input.GetAxis("Thrust") > .5f)//rightTrigger
 		{
 			this.rigidbody.AddForce(this.transform.forward*acceleration*Input.GetAxis("Thrust"));
-			//this.rigidbody.AddTorque(this.transform.forward*spinSpeed);
 
 		}
 		//Debug.Log("fire: " + Input.GetAxis("Fire1"));
@@ -129,7 +127,14 @@ public class ShipController : MonoBehaviour {
 		
 	}
 
-
+	/*
+	 * TODO: A shoot that works with a ShotPointNetwork
+	 * for each shotPosition in shotPOintNetwork.children
+	 * {
+	 * 	Shoot(shotPosition)
+	 * }
+	 * 
+	 * */
 	void Shoot()
 	{
 		//Debug.Log("shooting");
@@ -218,12 +223,12 @@ public class ShipController : MonoBehaviour {
 		yJoystick = Input.GetAxis("Vertical1");
 		//xJoystick2 = Input.GetAxis("Horizontal2");
 		yJoystick2 = Input.GetAxis("Vertical2");
-		Debug.Log("yjoystick2 " + yJoystick2);
+		//Debug.Log("yjoystick2 " + yJoystick2);
 		moving = false;
 
-
+		Viewpoint currentViewpoint = cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint;
 		//third person controls
-		if(cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint == Viewpoint.thirdPerson)
+		if( currentViewpoint == Viewpoint.thirdPerson)
 		{
 			if(Mathf.Abs(xJoystick) > joystickThreshold || Mathf.Abs(yJoystick) > joystickThreshold ) 
 			{
@@ -248,7 +253,7 @@ public class ShipController : MonoBehaviour {
 	
 		}
 		// side and top controls
-		else{
+		else if(currentViewpoint == Viewpoint.sideR){
 			if(Mathf.Abs(xJoystick) > joystickThreshold) 
 			{
 				//instead of case based movement we want to always move the ship based on the camera, right, left, up down, it's always from the camera's perspective
@@ -266,6 +271,48 @@ public class ShipController : MonoBehaviour {
 				Debug.Log("yRotation: " + yRotation);
 				transform.RotateAround(target.transform.position,Camera.main.transform.forward,yRotation);
 				
+				moving = true;
+			}
+			
+		}
+		else if(currentViewpoint == Viewpoint.sideL){
+			if(Mathf.Abs(xJoystick) > joystickThreshold) 
+			{
+				//instead of case based movement we want to always move the ship based on the camera, right, left, up down, it's always from the camera's perspective
+				//add force for xJoystick
+				Vector3 MovementVector = camera.transform.right*xJoystick;// + camera.transform.up*-yJoystick;
+				Vector3 force = MovementVector*twoDspeed;//*Time.fixedDeltaTime;
+				rigidbody.AddForce(force);
+				moving = true;
+				
+			}
+			if(Mathf.Abs(yJoystick) > joystickThreshold ) 
+			{
+				//rotate for yJoystick
+				float yRotation = yJoystick*rotationSpeed2D;
+				//Debug.Log("yRotation: " + yRotation);
+				transform.RotateAround(target.transform.position,Camera.main.transform.forward,-yRotation);
+				
+				moving = true;
+			}
+			
+		}
+		else if(currentViewpoint == Viewpoint.top){
+			if(Mathf.Abs(xJoystick) > joystickThreshold) 
+			{
+				//instead of case based movement we want to always move the ship based on the camera, right, left, up down, it's always from the camera's perspective
+				//rotate for xJoystick
+				float xRotation = xJoystick*rotationSpeed2D;
+				//Debug.Log("xRotation: " + xRotation);
+				transform.RotateAround(target.transform.position,Camera.main.transform.forward,xRotation);
+				moving = true;
+			}
+			if(Mathf.Abs(yJoystick) > joystickThreshold ) 
+			{
+				//add force for yJoystick
+				Vector3 MovementVector = camera.transform.up*-yJoystick;// + camera.transform.up*-yJoystick;
+				Vector3 force = MovementVector*twoDspeed;//*Time.fixedDeltaTime;
+				rigidbody.AddForce(force);
 				moving = true;
 			}
 			

@@ -46,11 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AIController.cs" />
      <Compile Include="Assets\AsteroidBeltSc.cs" />
      <Compile Include="Assets\AsteroidFieldSc.cs" />
      <Compile Include="Assets\CameraScript.cs" />
      <Compile Include="Assets\EmitParticles.cs" />
      <Compile Include="Assets\GenerateStars.cs" />
+     <Compile Include="Assets\GuiController.cs" />
      <Compile Include="Assets\LaserBeam.cs" />
      <Compile Include="Assets\LaserScript.cs" />
      <Compile Include="Assets\LockWheelSc.cs" />
