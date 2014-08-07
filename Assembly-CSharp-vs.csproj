@@ -47,11 +47,13 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\AIController.cs" />
+     <Compile Include="Assets\AssetBuilder.cs" />
      <Compile Include="Assets\AsteroidBeltSc.cs" />
      <Compile Include="Assets\AsteroidFieldSc.cs" />
      <Compile Include="Assets\CameraScript.cs" />
      <Compile Include="Assets\EmitParticles.cs" />
      <Compile Include="Assets\GenerateStars.cs" />
+     <Compile Include="Assets\Generator.cs" />
      <Compile Include="Assets\GuiController.cs" />
      <Compile Include="Assets\LaserBeam.cs" />
      <Compile Include="Assets\LaserScript.cs" />
@@ -59,6 +61,7 @@
      <Compile Include="Assets\ParticleCollider.cs" />
      <Compile Include="Assets\ParticleShield.cs" />
      <Compile Include="Assets\Projectile.cs" />
+     <Compile Include="Assets\QueueItem.cs" />
      <Compile Include="Assets\RotateStars.cs" />
      <Compile Include="Assets\ShieldScript.cs" />
      <Compile Include="Assets\ShieldShipController.cs" />

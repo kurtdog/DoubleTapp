@@ -2,58 +2,66 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AsteroidBeltSc : MonoBehaviour {
+public class AsteroidBeltSc : Generator {
 	
 	public List<GameObject> asteroids;
-	public List<GameObject> spawnedObjects;
-	public int Spawn;
+	//public List<GameObject> spawnedObjects;
+
 	public float minSize;
 	public float maxSize;
 
 	public int radiusInnerRing;
 	public int radiusOuterRing;
+	//public int queue;
+	//public int spawnsPerUpdate;
+
 	public Vector3 upAxis;
 
 	public float torqueMin;
 	public float torqueMax;
 
 	public float BeltSpinSpeed;
+	
+	//private Vector3 startPposl;
 
 	// Use this for initialization
-	void Start () {
-		
-		spawnedObjects = new List<GameObject>();
 
-		SpawnAsteroids();
-	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		this.transform.RotateAround(this.transform.position,this.transform.forward,BeltSpinSpeed*Time.fixedDeltaTime);
-		
-	}
 	
-	void SpawnAsteroids()
+		this.transform.RotateAround(this.transform.position,this.transform.forward,BeltSpinSpeed*Time.fixedDeltaTime);
+	}
+
+	public override void Pop()
+	{
+		SpawnAsteroid();
+	}
+
+
+
+	//TODO: needs fixing
+	void SpawnAsteroid()
 	{
 		Random random = new Random();
-		for(int i = 0; i < Spawn; i++)
-		{
-			float distance = Random.Range(radiusInnerRing,radiusOuterRing); // random distance between the inner and outer radius
-			//pick a random vector inside the unit circle, multiply it by this distance
-			Vector3 randomLocation = Random.insideUnitCircle.normalized*distance;
 
-			//Quaternion randomRotation = Random.rotation;
+		float distance = Random.Range(radiusInnerRing,radiusOuterRing); // random distance between the inner and outer radius
+		//pick a random vector inside the unit circle, multiply it by this distance
+		Vector3 randomLocation = Random.insideUnitCircle.normalized*distance;
+		//Vector3 randomLocation = Random.insideUnitCircle*this.transform.forward*distance;
 
-			GameObject ast = Instantiate(GetRandomAsteroid(),randomLocation,this.transform.rotation) as GameObject;
-			ast.rigidbody.AddTorque(GetRandomTorque());
-			ast.transform.parent = this.transform;
-			float size = Random.Range(minSize,maxSize);
-			
-			ast.transform.localScale += new Vector3(size,size,size);
-			
-			spawnedObjects.Add(ast);
-		}
+		//Quaternion randomRotation = Random.rotation;
+
+		GameObject ast = Instantiate(GetRandomAsteroid(),randomLocation,this.transform.rotation) as GameObject;
+		ast.rigidbody.AddTorque(GetRandomTorque());
+		ast.transform.parent = this.transform;
+		float size = Random.Range(minSize,maxSize);
+		
+		ast.transform.localScale += new Vector3(size,size,size);
+		
+		spawnedObjects.Add(ast);
+
+
 		
 		this.transform.LookAt(upAxis);
 	}
