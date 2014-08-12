@@ -17,8 +17,14 @@ public abstract class Generator : MonoBehaviour {
 		spawnedObjects = new List<GameObject>();
 	}
 
+	void Update()
+	{
+		ParentUpdate();
+
+	}
 	// Update is called once per frame
-	void Update () {
+	//this way child classes can call this class if they need to ovveride the Update Class
+	public void ParentUpdate () {
 		if(itemsToSpawn > 0) // if we still have items to spawn
 		{
 			assetBuilder.Push(this.gameObject.GetComponent<Generator>());  // push an item up to the AssetBuilder

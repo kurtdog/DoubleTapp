@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 public class AssetBuilder : MonoBehaviour {
 
-	public GameObject AsteroidBelt;
-	public GameObject AsteroidFeild;
-	public int queue;
+	//public GameObject AsteroidBelt;
+	//public GameObject AsteroidFeild;
 	public int spawnsPerUpdate;
 
 	public List<Generator> masterQueue = new List<Generator>();
@@ -21,9 +20,10 @@ public class AssetBuilder : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(masterQueue.Count > 0)
+
+		for(int i = 0; i < spawnsPerUpdate; i++)
 		{
-			for(int i = 0; i < spawnsPerUpdate; i++)
+			if(masterQueue.Count > 0)
 			{
 				Pop();
 			}
@@ -42,6 +42,7 @@ public class AssetBuilder : MonoBehaviour {
 
 		masterQueue[0].Pop(); //get the Generator.Pop method, and use it. This method is overridden by each generatorClass, and spawns an object for that generator
 		masterQueue.Remove(masterQueue[0]);
+
 		
 	}
 }

@@ -11,7 +11,7 @@ public class Projectile : MonoBehaviour {
 
 	public float lifeTime;
 	private float timer;
-
+	private GameObject parentGameObject;
 	// Use this for initialization
 	void Start () {
 		timer = 0;
@@ -29,12 +29,19 @@ public class Projectile : MonoBehaviour {
 
 	void OnCollisionEnter(Collision col)
 	{
-		//if(col.gameObject.GetComponent<AIScript>())
-		//{
-			//apply damage
-		//}
+		Debug.Log("hit");
+		if(col.gameObject.GetComponent<GameItem>() != null)
+		{
+			Debug.Log("hit Game Item");
+			col.gameObject.GetComponent<GameItem>().Damage(damage); //apply damage
+
+		}
 		Destroy(this.gameObject);
 	}
 
+	public void setParentGameObject( GameObject go)
+	{
+		this.parentGameObject = go;
+	}
 
 }

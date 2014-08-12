@@ -52,6 +52,7 @@
      <Compile Include="Assets\AsteroidFieldSc.cs" />
      <Compile Include="Assets\CameraScript.cs" />
      <Compile Include="Assets\EmitParticles.cs" />
+     <Compile Include="Assets\GameItem.cs" />
      <Compile Include="Assets\GenerateStars.cs" />
      <Compile Include="Assets\Generator.cs" />
      <Compile Include="Assets\GuiController.cs" />

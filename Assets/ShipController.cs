@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ShipController : MonoBehaviour {
+[RequireComponent(typeof(GameItem))]
+public class ShipController : GameItem {
 
 	public Camera camera;
 	public GameObject Projectile;
@@ -38,7 +39,10 @@ public class ShipController : MonoBehaviour {
 	int invY;
 	CameraScript cameraScript;
 	// Use this for initialization
+
+	public GameItem gameItem;
 	void Start () {
+		gameItem = (GameItem)GetComponent(typeof(GameItem));
 		lockedOn = false;
 		cameraScript = camera.GetComponent<CameraScript>();
 		projectiles = new List<GameObject>();
@@ -141,12 +145,12 @@ public class ShipController : MonoBehaviour {
 		shotTimer = 0;
 		
 		GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
-		
+		bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
 		
 		//Debug.Log("speed: " + bullet.GetComponent<Projectile>().speed);
 		//Debug.Log("forward: " + transform.forward);
 		
-		Vector3 f = -ShooterShip.transform.right*(bullet.GetComponent<Projectile>().speed +Mathf.Abs(this.rigidbody.velocity.magnitude));
+		Vector3 f = ShotPosition.transform.forward*(bullet.GetComponent<Projectile>().speed +Mathf.Abs(this.rigidbody.velocity.magnitude));
 		//bullet.GetComponent<Projectile>().force = f;
 		//Debug.Log("adding force f: " + f);
 		bullet.rigidbody.AddForce(f);
@@ -178,6 +182,7 @@ public class ShipController : MonoBehaviour {
 		xJoystick = Input.GetAxis("Horizontal1");
 		yJoystick = Input.GetAxis("Vertical1");
 		xJoystick2 = Input.GetAxis("Horizontal2");
+		yJoystick2 = Input.GetAxis("Vertical2");
 		moving = false;
 		
 		currentSpeed = rigidbody.velocity.magnitude; // view the velocity in the inspector

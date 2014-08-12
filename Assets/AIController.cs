@@ -2,13 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AIController : MonoBehaviour {
+public class AIController : GameItem {
 
 	public GameObject PlayerShip;
 	public Transform ShooterShipTransform;
 	public GameObject Projectile;
 	public GameObject ShotPosition;
-	public int health;
 	public float distance;
 	public float fireRate;
 	public int attackDistance;
@@ -19,7 +18,7 @@ public class AIController : MonoBehaviour {
 	public AiState aiState;
 	public AttackMethod attackMethod;
 	public enum AiState{FREEROAM,ATTACK,DEFEND}; // General Actions that AI's can perform
-	public enum AttackMethod {SIMPLE,AGGRESIVE,RELAXED}; //fine grain actions, different attack algorithms
+	public enum AttackMethod {ORBIT,SIMPLE,AGGRESIVE,RELAXED}; //fine grain actions, different attack algorithms
 
 	private List<GameObject> projectiles;
 	private float shotTimer = 0;
@@ -61,8 +60,8 @@ public class AIController : MonoBehaviour {
 		{
 			switch(attackMethod)
 			{
-			case AttackMethod.SIMPLE:
-				AttackSimple();
+			case AttackMethod.ORBIT:
+				Orbit();
 				break;
 			default: 
 				break;
@@ -73,7 +72,7 @@ public class AIController : MonoBehaviour {
 	/*
 	 * Fly directly towards ship, and fire when within fireDistance
 	 * */
-	void AttackSimple()
+	void Orbit()
 	{
 		//Debug.Log("AttackSimple");
 		FlyStraightTowardsTarget(PlayerShip.gameObject);
@@ -87,7 +86,7 @@ public class AIController : MonoBehaviour {
 		{
 			//Debug.Log("Shooting");
 			GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
-			
+			bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
 			
 			Vector3 shotDirection = target.transform.position - this.transform.position;
 			
