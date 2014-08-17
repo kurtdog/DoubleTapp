@@ -6,14 +6,14 @@ public class GuiController : MonoBehaviour {
 
 	public GameObject GUItext;
 	public GameObject ThreeDtext;
-	public GameObject Ship;
+	public GameObject ShooterShip;
 	public float offset;
-	private ShipController shipController;
+	private Shooter shooterScript;
 
 	//DISPLAY GUI items on game objects
 	// Use this for initialization
 	void Start () {
-		shipController = Ship.GetComponent<ShipController>();
+		shooterScript = ShooterShip.GetComponent<Shooter>();
 
 		GUItext = GameObject.Instantiate(GUItext) as GameObject;
 		GUItext.GetComponent<GUIText>().text = "Target";
@@ -26,7 +26,7 @@ public class GuiController : MonoBehaviour {
 	// Update is called once per frame
 	//TODO: change to OnGUI()
 	void Update () {
-		if(shipController.target != null)
+		if(shooterScript.target != null)
 		{
 
 			Display3DText();
@@ -43,7 +43,7 @@ public class GuiController : MonoBehaviour {
 
 	void DisplayGuiText()
 	{
-		Vector3 targetScreenPos = Camera.main.WorldToScreenPoint(shipController.target.transform.position);
+		Vector3 targetScreenPos = Camera.main.WorldToScreenPoint(shooterScript.target.transform.position);
 	}
 
 	void Display3DText()
@@ -54,7 +54,7 @@ public class GuiController : MonoBehaviour {
 		//Put the target at that position, plus a screen offset 
 
 		// shippositon - textLenght/2 + offset
-		ThreeDtext.transform.position = shipController.target.transform.position - Camera.main.transform.right*(ThreeDtext.transform.lossyScale.x/2) + Camera.main.transform.up*(ThreeDtext.transform.lossyScale.y);//,0));
+		ThreeDtext.transform.position = shooterScript.target.transform.position - Camera.main.transform.right*(ThreeDtext.transform.lossyScale.x/2) + Camera.main.transform.up*(ThreeDtext.transform.lossyScale.y);//,0));
 
 		//rotate the text
 		ThreeDtext.transform.rotation = Camera.main.transform.rotation;

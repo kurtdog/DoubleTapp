@@ -1,15 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(GameItem))]
-public class ShipController : GameItem {
+
+public class ShipController : MonoBehaviour {
 
 	public Camera camera;
-	public GameObject Projectile;
-	public GameObject ShotPosition;
+	//public GameObject Projectile;
+	//public GameObject ShotPosition;
 	public GameObject ShooterShip;
-	public Transform target;
+	//public Transform shooterScript.target;
 	public float acceleration;
 	//public float maxSpeed;
 	public float currentSpeed;
@@ -33,19 +33,22 @@ public class ShipController : GameItem {
 	private float yJoystick2;
 	private bool moving;
 
-	private List<GameObject> projectiles;
+
 	private float shotTimer;
 	int invX;
 	int invY;
 	CameraScript cameraScript;
+	Shooter shooterScript;
 	// Use this for initialization
 
-	public GameItem gameItem;
+//	public GameItem gameItem;
 	void Start () {
-		gameItem = (GameItem)GetComponent(typeof(GameItem));
+		//gameItem = (GameItem)GetComponent(typeof(GameItem));
+
 		lockedOn = false;
 		cameraScript = camera.GetComponent<CameraScript>();
-		projectiles = new List<GameObject>();
+		shooterScript = this.GetComponent<Shooter>();
+
 
 		invX = 1;
 		invY = 1;
@@ -63,29 +66,29 @@ public class ShipController : GameItem {
 	// Update is called once per frame
 	public void Update () {
 
-		shotTimer += Time.fixedDeltaTime;
+
 		//LockRotation();
 		GetKeyInput(); // take action on button press events
 		HandleControls();
 
+
+
+
 		if(lockedOn)
 		{
-			if(target != null) // if the target exists
-			{
-				this.transform.LookAt(target.transform.position); // lookAtit
-			}
+			this.transform.LookAt(shooterScript.target.transform.position); // lookAtit
 		}
 
 	}
 
 	//TODO: get this working
 	//not sure if I want to implement this. Maybe have it toggle-able
-	void FollowTarget() // if we're locked on, we want to follow our target, i.e. stay within a certain distance of it. When the target moves, we do too
+	void FollowTarget() // if we're locked on, we want to follow our shooterScript.target, i.e. stay within a certain distance of it. When the shooterScript.target moves, we do too
 	{	
-		Vector3 offset = target.position - cameraScript.currentView.transform.position;
+		Vector3 offset = shooterScript.target.position - cameraScript.currentView.transform.position;
 		if(cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint == Viewpoint.thirdPerson)
 		{
-			transform.position = target.position - (this.transform.rotation * offset);
+			transform.position = shooterScript.target.position - (this.transform.rotation * offset);
 		}
 		else{
 			transform.position = cameraScript.currentView.transform.position;
@@ -106,9 +109,15 @@ public class ShipController : GameItem {
 		// < 0 is Left Trigger
 		// > 0 is Right Trigger
 
+
 		if(Input.GetButtonDown("LockOn"))
 		{
+
 			lockedOn = !lockedOn;
+		}
+		if(shooterScript.target == null) // if the shooterScript.target exists
+		{
+			lockedOn = false;
 		}
 
 
@@ -118,9 +127,11 @@ public class ShipController : GameItem {
 
 		}
 		//Debug.Log("fire: " + Input.GetAxis("Fire1"));
-		if(Input.GetAxis("Fire1") > .5f && shotTimer > fireRate)//leftTrigger
+		if(Input.GetAxis("Fire1") > .5f )//leftTrigger
 		{
-			Shoot();
+			//Shoot();
+			Debug.Log("Trying to shoot");
+			this.GetComponent<Shooter>().Shoot();
 		}
 		//iff pressing back, and thrust, move backwards
 		if(Input.GetButton("Thrust") && xJoystick < 0)
@@ -139,6 +150,7 @@ public class ShipController : GameItem {
 	 * }
 	 * 
 	 * */
+	/*
 	void Shoot()
 	{
 		//Debug.Log("shooting");
@@ -157,6 +169,7 @@ public class ShipController : GameItem {
 		//bullet.rigidbody.velocity = f;
 		projectiles.Add(bullet);
 	}
+	*/
 	//restrict movement in the Z axis
 	//controls act as an arcade style 2D game in this mode
 	void HandleControls()
@@ -237,13 +250,13 @@ public class ShipController : GameItem {
 		{
 			if(Mathf.Abs(xJoystick) > joystickThreshold || Mathf.Abs(yJoystick) > joystickThreshold ) 
 			{
-				//float distance = Vector3.Distance(target.transform.position,ShooterShip.transform.position);
+				//float distance = Vector3.Distance(shooterScript.target.transform.position,ShooterShip.transform.position);
 				//Debug.Log("distance: " + distance);
-				//use L-Joystick to move in a circle around your target
+				//use L-Joystick to move in a circle around your shooterScript.target
 				float xRotation = xJoystick*rotationSpeed2D;//*(100.0f/distance); // rotate slower as you move away, and faster as you move close
 				float yRotation = yJoystick*rotationSpeed2D;//*(100.0f/distance);
-				transform.RotateAround(target.transform.position,Camera.main.transform.up,-xRotation);
-				transform.RotateAround(target.transform.position,Camera.main.transform.right,-yRotation);
+				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.up,-xRotation);
+				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.right,-yRotation);
 				moving = true;
 			}
 			if(Mathf.Abs(yJoystick2) > joystickThreshold)
@@ -274,7 +287,7 @@ public class ShipController : GameItem {
 				//rotate for yJoystick
 				float yRotation = yJoystick*rotationSpeed2D;
 				Debug.Log("yRotation: " + yRotation);
-				transform.RotateAround(target.transform.position,Camera.main.transform.forward,yRotation);
+				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.forward,yRotation);
 				
 				moving = true;
 			}
@@ -296,7 +309,7 @@ public class ShipController : GameItem {
 				//rotate for yJoystick
 				float yRotation = yJoystick*rotationSpeed2D;
 				//Debug.Log("yRotation: " + yRotation);
-				transform.RotateAround(target.transform.position,Camera.main.transform.forward,-yRotation);
+				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.forward,-yRotation);
 				
 				moving = true;
 			}
@@ -309,7 +322,7 @@ public class ShipController : GameItem {
 				//rotate for xJoystick
 				float xRotation = xJoystick*rotationSpeed2D;
 				//Debug.Log("xRotation: " + xRotation);
-				transform.RotateAround(target.transform.position,Camera.main.transform.forward,xRotation);
+				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.forward,xRotation);
 				moving = true;
 			}
 			if(Mathf.Abs(yJoystick) > joystickThreshold ) 

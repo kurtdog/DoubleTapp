@@ -12,13 +12,14 @@ public class LaserScript : MonoBehaviour
 	//public Transform target; // moved to ship Controller
 	public GameObject ShooterShip;
 	ShipController shipController;
+	Shooter shooterScript;
 
 	void Start () 
 	{
 		line = gameObject.GetComponent<LineRenderer>();
 		line.enabled = true; //false
+		shooterScript = this.GetComponent<Shooter>();
 		shipController = this.GetComponent<ShipController>();
-
 	}
 	void Update () 
 	{
@@ -45,14 +46,14 @@ public class LaserScript : MonoBehaviour
 			if(!hit.collider.isTrigger && !shipController.lockedOn) //if we aren't locked on, look for a new target
 			{
 				//hit.rigidbody.AddForceAtPosition(transform.forward* 10, hit.point);
-				if(shipController.target != null)
+				if(shooterScript.target != null)
 				{
-					shipController.target.renderer.material = originalMat; // Unhighlight the last target
+					shooterScript.target.renderer.material = originalMat; // Unhighlight the last target
 				}
-				shipController.target = hit.transform; // target = new target
-				originalMat = shipController.target.renderer.material; // record the items original material
+				shooterScript.target = hit.transform; // target = new target
+				originalMat = shooterScript.target.renderer.material; // record the items original material
 				highLightMat.mainTexture = originalMat.mainTexture; // copy the texture
-				shipController.target.renderer.material = highLightMat; //highlight the new target //color higlight
+				shooterScript.target.renderer.material = highLightMat; //highlight the new target //color higlight
 
 			}
 		}

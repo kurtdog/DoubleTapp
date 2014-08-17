@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AIController : GameItem {
+public class AIController : MonoBehaviour {
 
 	public GameObject PlayerShip;
 	public Transform ShooterShipTransform;

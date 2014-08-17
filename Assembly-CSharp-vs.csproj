@@ -52,10 +52,10 @@
      <Compile Include="Assets\AsteroidFieldSc.cs" />
      <Compile Include="Assets\CameraScript.cs" />
      <Compile Include="Assets\EmitParticles.cs" />
-     <Compile Include="Assets\GameItem.cs" />
      <Compile Include="Assets\GenerateStars.cs" />
      <Compile Include="Assets\Generator.cs" />
      <Compile Include="Assets\GuiController.cs" />
+     <Compile Include="Assets\Health.cs" />
      <Compile Include="Assets\LaserBeam.cs" />
      <Compile Include="Assets\LaserScript.cs" />
      <Compile Include="Assets\LockWheelSc.cs" />
@@ -67,6 +67,8 @@
      <Compile Include="Assets\ShieldScript.cs" />
      <Compile Include="Assets\ShieldShipController.cs" />
      <Compile Include="Assets\ShipController.cs" />
+     <Compile Include="Assets\Shooter.cs" />
+     <Compile Include="Assets\ShotPointNetwork.cs" />
      <Compile Include="Assets\Star.cs" />
      <Compile Include="Assets\ViewPointScript.cs" />
      <Compile Include="Assets\VisualizerStudio\Example Level\KillTimer.cs" />

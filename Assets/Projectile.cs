@@ -11,7 +11,7 @@ public class Projectile : MonoBehaviour {
 
 	public float lifeTime;
 	private float timer;
-	private GameObject parentGameObject;
+	GameObject parentGameObject;
 	// Use this for initialization
 	void Start () {
 		timer = 0;
@@ -29,14 +29,18 @@ public class Projectile : MonoBehaviour {
 
 	void OnCollisionEnter(Collision col)
 	{
-		Debug.Log("hit");
-		if(col.gameObject.GetComponent<GameItem>() != null)
+		//Debug.Log("hitting " + col.gameObject.name);
+		if(col.gameObject != parentGameObject) // only go on if we didn't hit our parentObject
 		{
-			Debug.Log("hit Game Item");
-			col.gameObject.GetComponent<GameItem>().Damage(damage); //apply damage
+			//Debug.Log("not parent");
+			if(col.gameObject.GetComponent<Health>() != null ) // we don't want to hurt ourself
+			{
+				//Debug.Log("hit Game Item");
+				col.gameObject.GetComponent<Health>().Damage(damage); //apply damage
 
+			}
+			Destroy(this.gameObject);
 		}
-		Destroy(this.gameObject);
 	}
 
 	public void setParentGameObject( GameObject go)

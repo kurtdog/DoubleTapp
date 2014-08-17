@@ -6,6 +6,7 @@ public class CameraScript : MonoBehaviour {
 
 	public GameObject Ship;
 	public GameObject ShooterShip;
+	private GameObject ShooterTarget;
 	public GameObject ViewPointNetwork;
 	public GameObject currentView;
 	public float adjustmentSpeed;
@@ -26,16 +27,19 @@ public class CameraScript : MonoBehaviour {
 
 	public bool invertedX;
 	public bool invertedY;
+
+	public float zoom; //0-1 indicating how much of the screen the gameObject and it's target take up.
+	public float maxDistance;
 	//public bool transitioning = false;
 
 	//public enum Viewpoint{top,sideR,sideL,thirdPerson,firstPerson};
-	float radiusFromShooter;
+	public float distanceFromShooter;
 	Vector3 offset;
 
 	// Use this for initialization
 	void Start () {
 		InitializeViewpointObjects();
-		radiusFromShooter = 1; //get a positionalOffset
+		distanceFromShooter = Vector3.Distance(this.transform.position,currentView.transform.position);
 		offset = ShooterShip.transform.position - thirdPersonView.transform.position;
 		currentView = thirdPersonView;
 		SwitchViewPoints(currentView); // switch to our selected viewpoint
@@ -53,15 +57,93 @@ public class CameraScript : MonoBehaviour {
 		HandleInput();
 
 	}
+
+	void AdjustDistance()
+	{
+		if(shipController.lockedOn)
+		{
+			ShooterTarget = Ship.GetComponent<Shooter>().target.gameObject;
+			Debug.Log("Items On Screen: " + ItemsOnScreen());
+			/*
+			if(!ItemsOnScreen()) // if the shooter ship and it's target are both on screen
+			{
+				LerpDistance(); // lerpdistance will check the distance from teh player to the object in worldspace. And lerp to make it a given distance in screen space
+			}*/
+
+			LerpDistance();
+		}
+
+
+
+	}
+
+	// return true if the shootership and it's target are on screen, false otherwise
+	bool ItemsOnScreen()
+	{
+		if(ShooterShip.renderer.isVisible && Ship.GetComponent<Shooter>().target.renderer.isVisible)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// lerpdistance will check the distance from teh player to the object in worldspace. And lerp to make it a given distance in screen space
+	void LerpDistance()
+	{
+		//get the distance of the two objects
+		float shipToTarget = Vector3.Distance(ShooterShip.transform.position,Ship.GetComponent<Shooter>().target.transform.position);
+		// we want worldDistance/cameraDistance = zoom. therefor cameraDistance = worldDist/zoom
+		float cameraDistance;
+		if(zoom != 0)
+		{
+			cameraDistance = shipToTarget/zoom; // get the distance we need to put our camera at
+		}
+		else{
+
+			cameraDistance = shipToTarget/.5f;
+
+		}
+			//Vector3 goalPosition = ;// the position we want to be in, "cameraDistance" away from the shooterSip, in the forward axis of our camera
+
+
+
+		Debug.Log("cameraDist: " + cameraDistance);
+		//hardsetCamera
+		Vector3 midpoint =ShooterShip.transform.position + ShooterShip.transform.forward*shipToTarget/2; // halfway between the ship and it's target, 
+		currentView.transform.position = midpoint - this.transform.forward*(cameraDistance); // + z distance
+		/*
+		 //Lerp Camera 
+		if(distanceFromShip < cameraDistance)
+		{
+			//lerp away
+			transform.position = Vector3.Lerp(transform.position,transform.position+this.transform.forward*cameraDistance);
+		}
+		else{
+			//lerp towards
+		}
+		*/
+
+	}
+
 	//follow the player's xyz position
 	void FollowShip()
 	{	
+		if(!shipController.lockedOn)
+		{
+			currentView = thirdPersonView;
+		}
+
+
 		if(currentView == thirdPersonView)
 		{
 			transform.position = ShooterShip.transform.position - (Camera.main.transform.rotation * offset);
 		}
 		else{
 			transform.position = currentView.transform.position;
+			AdjustDistance(); // adjust out distance so that both items
 		}
 
 	}

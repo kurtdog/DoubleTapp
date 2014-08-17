@@ -5,7 +5,7 @@ using System.Collections.Generic;
  * abstract tool to be inherited by anything that is damagable.
  * 
  * */ 
-public class GameItem : MonoBehaviour {
+public class Health : MonoBehaviour {
 
 	public List<GameObject> scrapComponents;
 	public float scrapScale;

@@ -44,7 +44,7 @@ public class AsteroidBeltSc : Generator {
 	void SpawnAsteroid()
 	{
 		Random random = new Random();
-		Debug.Log("Spawning Ast");
+		//Debug.Log("Spawning Ast");
 		float distance = Random.Range(radiusInnerRing,radiusOuterRing); // random distance between the inner and outer radius
 		//pick a random vector inside the unit circle, multiply it by this distance
 		Vector3 randomLocation = Random.insideUnitCircle.normalized*distance;
