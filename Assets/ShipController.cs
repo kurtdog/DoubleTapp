@@ -15,10 +15,13 @@ public class ShipController : MonoBehaviour {
 	public float currentSpeed;
 	public float fireRate;
 	public float turnSpeed;
+
 	public float twoDspeed;
 	public float rotationSlow;
 	public float rotationSpeed3D;
+	public float aimRotationSpeed;
 	public float rotationSpeed2D;
+	private float currentRotationSpeed;
 	public bool invertX;
 	public bool invertY;
 	public bool lockedOn;
@@ -48,7 +51,7 @@ public class ShipController : MonoBehaviour {
 		lockedOn = false;
 		cameraScript = camera.GetComponent<CameraScript>();
 		shooterScript = this.GetComponent<Shooter>();
-
+		currentRotationSpeed = rotationSpeed3D;
 
 		invX = 1;
 		invY = 1;
@@ -109,6 +112,14 @@ public class ShipController : MonoBehaviour {
 		// < 0 is Left Trigger
 		// > 0 is Right Trigger
 
+		if(Input.GetButtonDown("SlowAim"))
+		{
+			currentRotationSpeed = aimRotationSpeed;
+		}
+		if(Input.GetButtonUp("SlowAim"))
+		{
+			currentRotationSpeed = rotationSpeed3D;
+		}
 
 		if(Input.GetButtonDown("LockOn"))
 		{
@@ -209,7 +220,7 @@ public class ShipController : MonoBehaviour {
 		{
 			//rigidbody.AddForce(force);
 			
-			Vector3 torqueVector = Camera.main.transform.up*invX*xJoystick*rotationSpeed3D;
+			Vector3 torqueVector = Camera.main.transform.up*invX*xJoystick*currentRotationSpeed;
 			rigidbody.AddTorque(torqueVector);
 			moving = true;
 
@@ -220,7 +231,7 @@ public class ShipController : MonoBehaviour {
 		// look left-right
 		if(Mathf.Abs(yJoystick) > joystickThreshold)// 
 		{
-			Vector3 torqueVector = Camera.main.transform.right*yJoystick*invY*rotationSpeed3D; 
+			Vector3 torqueVector = Camera.main.transform.right*yJoystick*invY*currentRotationSpeed; 
 			rigidbody.AddTorque(torqueVector);
 			moving = true;
 		}

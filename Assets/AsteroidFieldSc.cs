@@ -29,7 +29,7 @@ public class AsteroidFieldSc : Generator {
 		Random random = new Random();
 
 
-			Vector3 randomLocation = Random.insideUnitSphere*radius;
+			Vector3 randomLocation = this.transform.position + Random.insideUnitSphere*radius;
 			Quaternion randomRotation = Random.rotation;
 			GameObject ast = Instantiate(GetRandomAsteroid(),randomLocation,randomRotation) as GameObject;
 			ast.transform.parent = this.transform;

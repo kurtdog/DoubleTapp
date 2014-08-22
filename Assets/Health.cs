@@ -10,12 +10,13 @@ public class Health : MonoBehaviour {
 	public List<GameObject> scrapComponents;
 	public float scrapScale;
 	public int health;
+	public int maxHealth;
 	public int scrapVelocity; 
 	public bool isDead = false;
 
 	// Use this for initialization
 	void Start () {
-	
+		health = maxHealth;
 	}
 	
 	// Update is called once per frame
@@ -37,7 +38,14 @@ public class Health : MonoBehaviour {
 			{
 				indexes.Add(i);
 			}
-			int spawnCount = Random.Range(0,scrapComponents.Count); // get a random # of items to spawn
+			int spawnCount = 0;
+			if(scrapComponents.Count > 0)
+			{
+				spawnCount = Random.Range(1,scrapComponents.Count); // get a random # of items to spawn
+			}
+			else{
+				spawnCount = Random.Range(0,scrapComponents.Count); // get a random # of items to spawn
+			}
 			Debug.Log("Creating " + spawnCount + "objects");
 			for(int i = 0; i < spawnCount; i++) // for the # of items we want to spawn
 			{

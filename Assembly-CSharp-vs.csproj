@@ -56,9 +56,11 @@
      <Compile Include="Assets\Generator.cs" />
      <Compile Include="Assets\GuiController.cs" />
      <Compile Include="Assets\Health.cs" />
+     <Compile Include="Assets\HealthLine.cs" />
      <Compile Include="Assets\LaserBeam.cs" />
      <Compile Include="Assets\LaserScript.cs" />
      <Compile Include="Assets\LockWheelSc.cs" />
+     <Compile Include="Assets\MeteorShower.cs" />
      <Compile Include="Assets\ParticleCollider.cs" />
      <Compile Include="Assets\ParticleShield.cs" />
      <Compile Include="Assets\Projectile.cs" />
