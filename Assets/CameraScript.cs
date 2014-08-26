@@ -50,8 +50,10 @@ public class CameraScript : MonoBehaviour {
 	void Update () {
 
 	
+ 
+        //TODO: turn this off for the menu screen
 		FollowShip();//follow the player's position
-
+        
 
 
 		HandleInput();
@@ -306,7 +308,11 @@ public class CameraScript : MonoBehaviour {
 			
 		}
 		else{
-			LerpRotation();
+           
+            if (!Input.GetButton("SlowAim"))
+            {
+                LerpRotation();
+            }
 		}
 		//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
 	}

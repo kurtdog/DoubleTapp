@@ -1,11 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Generator.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\Bullet\Bullet\Assets\PlayerController.cs">
     <Files>
-      <File FileName="Assets\MeteorShower.cs" Line="47" Column="47" />
-      <File FileName="Assets\AsteroidFieldSc.cs" Line="22" Column="3" />
-      <File FileName="Assets\Generator.cs" Line="1" Column="1" />
-      <File FileName="Assets\AsteroidBeltSc.cs" Line="51" Column="5" />
+      <File FileName="..\Bullet\Bullet\Assets\Wave.cs" Line="10" Column="30" />
+      <File FileName="..\Bullet\Bullet\Assets\GameController.cs" Line="17" Column="32" />
+      <File FileName="..\Bullet\Bullet\Assets\PlayerMovement.cs" Line="14" Column="6" />
+      <File FileName="..\Bullet\Bullet\Assets\AIcontroller.cs" Line="39" Column="3" />
+      <File FileName="..\Bullet\Bullet\Assets\PlayerController.cs" Line="19" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

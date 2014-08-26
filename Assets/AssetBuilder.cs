@@ -8,7 +8,7 @@ public class AssetBuilder : MonoBehaviour {
 	//public GameObject AsteroidFeild;
 	public int spawnsPerUpdate;
 
-	public List<Generator> masterQueue = new List<Generator>();
+    public List<GameObject> masterQueue = new List<GameObject>();
 
 
 
@@ -25,6 +25,7 @@ public class AssetBuilder : MonoBehaviour {
 		{
 			if(masterQueue.Count > 0)
 			{
+                //Debug.Log("Popping: " + masterQueue[0]);
 				Pop();
 			}
 		}
@@ -32,17 +33,28 @@ public class AssetBuilder : MonoBehaviour {
 	}
 
 	//Generator scripts can push items into our queue
-	public void Push(Generator g)
+    public void Push(GameObject g)
 	{
 		masterQueue.Add(g);
 	}
 
+    //call the Pop method for the generator currently in the queue's first spot.
 	private void Pop()
 	{
-
-		masterQueue[0].Pop(); //get the Generator.Pop method, and use it. This method is overridden by each generatorClass, and spawns an object for that generator
-		masterQueue.Remove(masterQueue[0]);
-
-		
+        if(masterQueue[0].GetComponent<Generator>() != null)
+        {
+            Generator generator = masterQueue[0].GetComponent<Generator>();
+            //Debug.Log("(" + generator.spawnedObjects.Count + "," + generator.itemsToSpawn + ")");
+            if (generator.spawnedObjects.Count < generator.itemsToSpawn)
+            {
+               // Debug.Log("generator.Pop");
+                generator.Pop(); //get the Generator.Pop method, and use it. This method is overridden by each generatorClass, and spawns an object for that generator
+            }
+            else
+            {
+                //Debug.Log("Removing: " + masterQueue[0]);
+                masterQueue.Remove(masterQueue[0].gameObject);
+            }
+        }
 	}
 }
