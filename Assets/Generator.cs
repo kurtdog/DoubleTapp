@@ -8,9 +8,13 @@ public abstract class Generator : MonoBehaviour {
 	public AssetBuilder assetBuilder;
 	public List<GameObject> spawnedObjects;
 	public int itemsToSpawn;
+    public float itemTorqueMin;
+    public float itemTorqueMax;
+
+
+
 
 	public abstract void Pop(); // to be implemented by sublclasses
-	//public abstract void Push();
 
 	void Start()
 	{
@@ -19,6 +23,7 @@ public abstract class Generator : MonoBehaviour {
 
 	void Update()
 	{
+        //Debug.Log("updating");
 		ParentUpdate();
 
 	}
@@ -31,4 +36,13 @@ public abstract class Generator : MonoBehaviour {
 			assetBuilder.Push(this.gameObject);  // push this generator up to the AssetBuilder
 		}
 	}
+
+    public Vector3 GetRandomTorque()
+    {
+        float torqueX = Random.Range(itemTorqueMin, itemTorqueMax);
+        float torqueY = Random.Range(itemTorqueMin, itemTorqueMax);
+        float torqueZ = Random.Range(itemTorqueMin, itemTorqueMax);
+
+        return new Vector3(torqueX, torqueY, torqueZ);
+    }
 }

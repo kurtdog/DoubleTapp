@@ -63,6 +63,8 @@
      <Compile Include="Assets\LockWheelSc.cs" />
      <Compile Include="Assets\MeteorShower.cs" />
      <Compile Include="Assets\ParticleCollider.cs" />
+     <Compile Include="Assets\ParticleGenerator.cs" />
+     <Compile Include="Assets\ParticleScript.cs" />
      <Compile Include="Assets\ParticleShield.cs" />
      <Compile Include="Assets\Projectile.cs" />
      <Compile Include="Assets\QueueItem.cs" />

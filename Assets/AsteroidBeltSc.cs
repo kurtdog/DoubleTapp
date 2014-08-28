@@ -16,10 +16,6 @@ public class AsteroidBeltSc : Generator {
 	//public int spawnsPerUpdate;
 
 	public Vector3 upAxis;
-
-	public float torqueMin;
-	public float torqueMax;
-
 	public float BeltSpinSpeed;
 	
 	//private Vector3 startPposl;
@@ -68,14 +64,7 @@ public class AsteroidBeltSc : Generator {
 		this.transform.LookAt(upAxis);
 	}
 
-	Vector3 GetRandomTorque()
-	{
-		float torqueX = Random.Range(torqueMin,torqueMax);
-		float torqueY = Random.Range(torqueMin,torqueMax);
-		float torqueZ = Random.Range(torqueMin,torqueMax);
 
-		return new Vector3(torqueX,torqueY,torqueZ);
-	}
 
 
 	GameObject GetRandomAsteroid()
