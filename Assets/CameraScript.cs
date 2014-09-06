@@ -24,6 +24,8 @@ public class CameraScript : MonoBehaviour {
 	private float pitch;
 	private float yaw;
 	private float lastYaw;
+    private float lastRoll;
+    //private float lastPitch;
 
 	public bool invertedX;
 	public bool invertedY;
@@ -164,12 +166,17 @@ public class CameraScript : MonoBehaviour {
 		{
 			yawSign = -1;
 		}
+        int rollSign = 1;
+        if(this.transform.right.x < 0)
+        {
+            rollSign = -1;
+        }
 		pitch = pitchSign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
 		yaw = yawSign*Vector3.Angle(ShooterShip.transform.forward,this.transform.forward);
-
+        roll = rollSign*Vector3.Angle(ShooterShip.transform.right,this.transform.right);
 		//Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
 		//Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  upAngle: " + upAngle +" forwardAngle: " + forwardAngle);
-		//Debug.Log("pitch: " + pitch +" yaw: " + yaw + " DeltaYaw " + Mathf.Abs(yaw-lastYaw));
+		//Debug.Log("pitch: " + pitch +" yaw: " + yaw + " roll: " + roll);// + " DeltaYaw " + Mathf.Abs(yaw-lastYaw));
 
 
 
@@ -182,11 +189,15 @@ public class CameraScript : MonoBehaviour {
 			transform.rotation = Quaternion.LookRotation(newForward);
 			
 		}
-		if(Mathf.Abs(pitch) > lerpTreshold  )
+		else if(Mathf.Abs(roll) > 5  ) // only fix roll whne not fixing yaw
 		{
-
+            //Vector3 newUp = Vector3.RotateTowards(this.transform.up, ShooterShip.transform.up, step, 0.0f);
+           // transform.rotation = Quaternion.LookRotation(newForward);
+           // this.transform.Rotate(ShooterShip.transform.forward, rollSign*lerpSpeed);
+            //Debug.Log("Rolling");
 		}
 		lastYaw = yaw;
+        lastRoll = roll;
 	}
 
 

@@ -7,18 +7,18 @@ public class AIController : MonoBehaviour {
 	public GameObject PlayerShip;
 	public Transform ShooterShipTransform;
 	public GameObject Projectile;
-	public GameObject ShotPosition;
+	public GameObject ShotPointNetwork;
 	public float distance;
 	public float fireRate;
 	public int attackDistance;
 	public int fireDistance;
 	//public float maxSpeed;
 	public float acceleration;
+    public float rotationSpeed; // for AiState(Rotate)
 
-	public AiState aiState;
-	public AttackMethod attackMethod;
-	public enum AiState{FREEROAM,ATTACK,DEFEND}; // General Actions that AI's can perform
-	public enum AttackMethod {ORBIT,SIMPLE,AGGRESIVE,RELAXED}; //fine grain actions, different attack algorithms
+    public List<Behavior> behaviors;
+    public enum Behavior { FREEROAM, SHOOTATPLAYER, CHASE, ROTATE }; // General Actions that AI's can perform
+    ShotPointNetwork shotPointNetwork;
 
 	private List<GameObject> projectiles;
 	private float shotTimer = 0;
@@ -33,6 +33,7 @@ public class AIController : MonoBehaviour {
 	 */ 
 	// Use this for initialization
 	void Start () {
+        shotPointNetwork = ShotPointNetwork.GetComponent<ShotPointNetwork>();
 		projectiles = new List<GameObject>();
 	}
 	
@@ -41,72 +42,71 @@ public class AIController : MonoBehaviour {
 	
 		shotTimer += Time.fixedDeltaTime;
 		distance = Vector3.Distance(this.transform.position,ShooterShipTransform.position);
-		switch(aiState)
-		{
-		case AiState.ATTACK:
-			Attack ();
-			break;
 
-		default:
-			break;
-		}
+        HandleBehaviors();
+
 	}
 
-	void Attack()
+	void HandleBehaviors()
 	{
 		//Debug.Log("Attacking");
 
-		if( distance< attackDistance)
-		{
-			switch(attackMethod)
-			{
-			case AttackMethod.ORBIT:
-				Orbit();
-				break;
-			default: 
-				break;
-			}
-		}
+
+        if (behaviors.Contains(Behavior.CHASE))
+        {
+            FlyStraightTowardsPlayer();
+        }
+
+        if (behaviors.Contains(Behavior.SHOOTATPLAYER))
+        {
+            ShootAtPlayer();
+        }
+
+        if (behaviors.Contains(Behavior.ROTATE))
+        {
+            Rotate();
+        }
+		
 	}
 
-	/*
-	 * Fly directly towards ship, and fire when within fireDistance
-	 * */
-	void Orbit()
-	{
-		//Debug.Log("AttackSimple");
-		FlyStraightTowardsTarget(PlayerShip.gameObject);
-		Shoot(PlayerShip.gameObject,ShotPosition);
-	}
+    void Rotate()
+    {
 
-	void Shoot(GameObject target,GameObject ShotPosition)
+        this.transform.Rotate(this.transform.up, rotationSpeed*Time.fixedDeltaTime);
+    }
+
+	void ShootAtPlayer()
 	{
 
 		if(shotTimer > 1/fireRate)
 		{
-			//Debug.Log("Shooting");
-			GameObject bullet = Instantiate(Projectile, ShotPosition.transform.position,this.transform.rotation) as GameObject;
-			bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
-			
-			Vector3 shotDirection = target.transform.position - this.transform.position;
-			
-			Vector3 f = shotDirection*(bullet.GetComponent<Projectile>().speed +Mathf.Abs(this.rigidbody.velocity.magnitude));
-			//bullet.GetComponent<Projectile>().force = f;
-			//Debug.Log("adding force f: " + f);
-			bullet.rigidbody.AddForce(f);
-			//bullet.rigidbody.velocity = f;
-			projectiles.Add(bullet);
-			shotTimer = 0;
+            foreach (GameObject shotPoint in shotPointNetwork.shotPoints) 
+            {
+                Debug.Log("Shooting");
+                GameObject bullet = Instantiate(Projectile, shotPoint.transform.position, shotPoint.transform.rotation) as GameObject;
+                bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
+
+                Vector3 shotDirection = ShooterShipTransform.transform.position - shotPoint.transform.position;
+                bullet.transform.forward = shotDirection;
+
+                Vector3 f = shotDirection * (bullet.GetComponent<Projectile>().speed + Mathf.Abs(this.rigidbody.velocity.magnitude));
+                //bullet.GetComponent<Projectile>().force = f;
+                //Debug.Log("adding force f: " + f);
+                bullet.rigidbody.AddForce(f);
+                //bullet.rigidbody.velocity = f;
+                projectiles.Add(bullet);
+                shotTimer = 0;
+            }
 		}
 	}
 
 
 	//flight methods
-	void FlyStraightTowardsTarget(GameObject target)
+	void FlyStraightTowardsPlayer()
 	{
 		//Debug.Log("Flying");
-		Vector3 targetDirection = target.transform.position - this.transform.position;
-		this.transform.LookAt(target.transform.position); // LookAt the target
+        Vector3 targetDirection = PlayerShip.transform.position - this.transform.position;
+        this.transform.LookAt(PlayerShip.transform.position); // LookAt the target
 		this.rigidbody.AddForce(this.transform.forward*acceleration); // move towards it
 
 	}

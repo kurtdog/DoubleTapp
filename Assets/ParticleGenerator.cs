@@ -10,7 +10,7 @@ public class ParticleGenerator : Generator {
     void Start()
     {
         spawnedObjects = new List<GameObject>();
-        itemsToSpawn = Random.Range(1, 6);
+        itemsToSpawn = Random.Range(1,3);
     }
 
     //spawn 1 random particle system
@@ -21,7 +21,7 @@ public class ParticleGenerator : Generator {
         //maybe have an enum ParticleType{CLOUD,BELT,SPIRAL,ETC}.. in a particle controller attached to each particle system.
         //TODO: if cloud then spawn a couple?
 
-        GameObject particleSys = Instantiate(particleSystems[Random.Range(0,particleSystems.Count)], this.transform.position, this.transform.rotation) as GameObject;
+        GameObject particleSys = Instantiate(particleSystems[Random.Range(0,particleSystems.Count-1)], this.transform.position, this.transform.rotation) as GameObject;
         ParticleScript particleScript = particleSys.GetComponent<ParticleScript>();
         ParticleSystem particleSystem = particleSys.GetComponent<ParticleSystem>();
         if (particleScript != null)

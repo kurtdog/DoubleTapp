@@ -141,7 +141,7 @@ public class ShipController : MonoBehaviour {
 		if(Input.GetAxis("Fire1") > .5f )//leftTrigger
 		{
 			//Shoot();
-			Debug.Log("Trying to shoot");
+			//Debug.Log("Trying to shoot");
 			this.GetComponent<Shooter>().Shoot();
 		}
 		//iff pressing back, and thrust, move backwards

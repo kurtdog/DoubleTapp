@@ -4,38 +4,52 @@ using System.Collections.Generic;
 
 public class ParticleScript : MonoBehaviour {
    
-    public List<Color> availableColors;
-    public int minSize;
-    public int maxSize;
+    private List<Color> availableColors;
     public int minParticleSize;
     public int maxParticleSize;
     public ParticleType particleType;
-    public enum ParticleType { BELT, SPIRAL, CLOUD };
+    public enum ParticleType { BELT, SPIRAL, CLOUD , HIGHWAY};
     public float rotationSpeed; // used for spiral, cloud
 
 	// Use this for initialization
 	void Start () {
+        availableColors = new List<Color>();
+        availableColors.Add(Color.magenta);
+        availableColors.Add(Color.cyan);
+        availableColors.Add(Color.red);
+
         this.GetComponent<ParticleSystem>().startColor = getAvailableColor();
-        float size = Random.Range(minSize, maxSize);
-        this.transform.localScale += new Vector3(size, size, size);
+        //this.GetComponent<ParticleSystem>().startColor = Color.magenta;
+        //ParticleEmitter pe = this.GetComponent<ParticleEmitter>();
+     
+        Debug.Log(("startColor = " + this.GetComponent<ParticleSystem>().startColor));
+        float size = Random.value;
+        //this.transform.localScale += new Vector3(size, size, size);
         particleSystem.startSize = particleSystem.startSize * size;
+
+        if(particleType == ParticleType.HIGHWAY)
+        {
+            this.transform.Rotate(this.transform.forward, Random.Range(0,180));
+        }
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        
         if (particleType == ParticleType.SPIRAL)
         {
             this.transform.Rotate(this.transform.forward, rotationSpeed);
         }
-
-
 	}
 
     public Color getAvailableColor()
     {
         if (availableColors.Count > 0)
         {
-            return availableColors[Random.Range(0, availableColors.Count)];
+            int rand = Random.Range(0, availableColors.Count-1);
+            Color returnColor = availableColors[rand];
+            Debug.Log("gettin color" + availableColors[rand]);
+            return returnColor;
         }
         else
         {

@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour {
     public int newObjectDistanceMin; // how far away to generate new objects
     public int newObjectDistanceMax;
     public int objectsToGenerate;
-    public int minDistFromObjects; // minimum distance we have to be from objects in order to spawn something new
+   // public int minDistFromObjects; // minimum distance we have to be from objects in order to spawn something new
     public List<GameObject> generatedObjects;
     
 
@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour {
     {
         foreach (GameObject generatedObject in generatedObjects)
         {
-            if (Vector3.Distance(Shooter.transform.position, generatedObject.transform.position) < minDistFromObjects)
+            if (Vector3.Distance(Shooter.transform.position, generatedObject.transform.position) < newObjectDistanceMax)
             {
                 return true;
             }

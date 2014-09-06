@@ -69,7 +69,7 @@ public class AsteroidBeltSc : Generator {
 
 	GameObject GetRandomAsteroid()
 	{
-		int index = Random.Range(0,asteroids.Count);
+		int index = Random.Range(0,asteroids.Count-1);
 		
 		return asteroids[index];
 	}
