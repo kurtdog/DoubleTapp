@@ -29,7 +29,7 @@ public class ForceField : MonoBehaviour {
 
         if (solidTimer < effectTime)
         {
-            Debug.Log("Solidifying");
+            //Debug.Log("Solidifying");
             MakeSolid();
         }
         else
@@ -39,7 +39,7 @@ public class ForceField : MonoBehaviour {
 
         if (transparentTimer < effectTime)
         {
-            Debug.Log("MakingTransparent");
+            //Debug.Log("MakingTransparent");
             MakeTransparent();
         }
 
@@ -56,7 +56,7 @@ public class ForceField : MonoBehaviour {
         //TODO: , less ahcky, after spawning projectile, make it's parent the thing that shot it. Then compare it's parent to public Ship
         if (col.gameObject.name != ParentShip.GetComponent<Shooter>().projectile.name + "(Clone)") 
         { 
-            Debug.Log("Trigger");
+            //Debug.Log("Trigger");
             playEffect = true;
             solidTimer = 0;
         }

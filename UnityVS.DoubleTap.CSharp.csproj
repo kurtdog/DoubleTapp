@@ -82,6 +82,7 @@
     <Compile Include="Assets\ParticleGenerator.cs" />
     <Compile Include="Assets\ParticleScript.cs" />
     <Compile Include="Assets\ParticleShield.cs" />
+    <Compile Include="Assets\PointNetwork.cs" />
     <Compile Include="Assets\Projectile.cs" />
     <Compile Include="Assets\QueueItem.cs" />
     <Compile Include="Assets\RotateStars.cs" />
@@ -89,7 +90,6 @@
     <Compile Include="Assets\ShieldShipController.cs" />
     <Compile Include="Assets\ShipController.cs" />
     <Compile Include="Assets\Shooter.cs" />
-    <Compile Include="Assets\ShotPointNetwork.cs" />
     <Compile Include="Assets\Star.cs" />
     <Compile Include="Assets\ViewPointScript.cs" />
     <Compile Include="Assets\VisualizerStudio\Example Level\KillTimer.cs" />

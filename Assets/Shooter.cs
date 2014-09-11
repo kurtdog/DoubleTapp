@@ -15,10 +15,10 @@ public class Shooter : MonoBehaviour {
 	public enum ShotType{StraightShot,Homing};
 	private List<GameObject> projectiles;
 
-	ShotPointNetwork shotPointNetwork;
+	PointNetwork shotPointNetwork;
 	// Use this for initialization
 	void Start () {
-		shotPointNetwork = ShotPointNetwork.GetComponent<ShotPointNetwork>();
+		shotPointNetwork = ShotPointNetwork.GetComponent<PointNetwork>();
 		projectiles = new List<GameObject>();
 	}
 	
@@ -33,11 +33,11 @@ public class Shooter : MonoBehaviour {
 		if(shotTimer > 1/fireRate)
 		{
 			shotTimer = 0;
-			for(int i = 0; i < shotCount; i++)
+            for (int i = 0; i < shotPointNetwork.points.Count; i++)
 			{
-				GameObject bullet = Instantiate(projectile, shotPointNetwork.shotPoints[i].transform.position,this.transform.rotation) as GameObject;
+                GameObject bullet = Instantiate(projectile, shotPointNetwork.points[i].transform.position, this.transform.rotation) as GameObject;
 				bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
-				AddShotBehavior(bullet,shotPointNetwork.shotPoints[i].transform);
+                AddShotBehavior(bullet, shotPointNetwork.points[i].transform);
 				projectiles.Add(bullet);
 			}
 		}
