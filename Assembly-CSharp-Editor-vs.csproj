@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Editor\AIController_Editor.cs" />
      <Compile Include="Assets\VisualizerStudio\Editor\Base\VisBasePropertyModifierEditor.cs" />
      <Compile Include="Assets\VisualizerStudio\Editor\Base\VisBasePropertyTriggerEditor.cs" />
      <Compile Include="Assets\VisualizerStudio\Editor\Controllers\VisFrequencyControllerEditor.cs" />
