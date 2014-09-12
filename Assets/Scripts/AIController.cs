@@ -6,28 +6,35 @@ public class AIController : MonoBehaviour {
 
 	public GameObject PlayerShip;
 	public Transform ShooterShipTransform;
-	public GameObject Projectile;
-	public GameObject ShotPointNetwork;
-    public GameObject SpawnPointNetwork;
+    public List<Behavior> behaviors;
+
+    //Attacking
+    [HideInInspector] public int attackDistance;
+    [HideInInspector] public int fireDistance;
+    [HideInInspector] public float fireRate;
+    [HideInInspector] public GameObject Projectile;
+    [HideInInspector] public GameObject ShotPointNetwork;
+	//Movement
+    [HideInInspector] public float acceleration;
+    [HideInInspector] public float distance;
+    //Rotation
+    [HideInInspector] public float rotationSpeed; // for AiState(Rotate)
+    public Vector3 rotationAxis; //TODO: figure out vector3 custom inspector
+    //Spawning
+    [HideInInspector] public GameObject SpawnPointNetwork;
+    [HideInInspector] public float spawnRate;
     public List<GameObject> EnemiesToSpawn;
-    public int maxEnemySpawns;
-    public float spawnRate;
-	public float distance;
-	public float fireRate;
-	public int attackDistance;
-	public int fireDistance;
-	//public float maxSpeed;
-	public float acceleration;
-    public float rotationSpeed; // for AiState(Rotate)
+    [HideInInspector] public int maxEnemySpawns;
+    //Unloading, i.e., AI that unload, not the carrier ai's
+    [HideInInspector]
     public float unloadTime; //Unload, UNLOAD's only purpose is to show 'unloadTime'
 
-    public List<Behavior> behaviors;
     public enum Behavior { FREEROAM, SHOOTATPLAYER, FLYSTRAIGHT ,LOOKATPLAYER, ROTATE, SPAWNENEMIES, UNLOAD }; // General Actions that AI's can perform
 
     PointNetwork shotPointNetwork;
     PointNetwork spawnPointNetwork;
 
-	public List<GameObject> projectiles;
+	private List<GameObject> projectiles;
     private List<GameObject> enemies;
     private float shotTimer;
     private float spawnTimer;
@@ -116,7 +123,7 @@ public class AIController : MonoBehaviour {
     void Rotate()
     {
 
-        this.transform.Rotate(this.transform.up, rotationSpeed * Time.fixedDeltaTime);
+        this.transform.Rotate(rotationAxis, rotationSpeed * Time.fixedDeltaTime);
     }
 
     void SpawnEnemies()
@@ -165,20 +172,22 @@ public class AIController : MonoBehaviour {
             {
             //Debug.Log("Shooting");
             GameObject shotPoint = shotPointNetwork.points[shotCount];
-           
-            GameObject bullet = Instantiate(Projectile, shotPoint.transform.position, shotPoint.transform.rotation) as GameObject;
-            bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
+            if (shotPoint.activeSelf)
+            {
+                GameObject bullet = Instantiate(Projectile, shotPoint.transform.position, shotPoint.transform.rotation) as GameObject;
+                bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
 
-            Vector3 shotDirection = ShooterShipTransform.transform.position - shotPoint.transform.position;
-            bullet.transform.forward = shotDirection;
+                Vector3 shotDirection = ShooterShipTransform.transform.position - shotPoint.transform.position;
+                bullet.transform.forward = shotDirection;
 
-            Vector3 f = shotDirection * (bullet.GetComponent<Projectile>().speed + Mathf.Abs(this.rigidbody.velocity.magnitude));
-            //bullet.GetComponent<Projectile>().force = f;
-            //Debug.Log("adding force f: " + f);
-            bullet.rigidbody.AddForce(f);
-            //bullet.rigidbody.velocity = f;
-            projectiles.Add(bullet);
-            shotCount++;
+                Vector3 f = shotDirection * (bullet.GetComponent<Projectile>().speed + Mathf.Abs(this.rigidbody.velocity.magnitude));
+                //bullet.GetComponent<Projectile>().force = f;
+                //Debug.Log("adding force f: " + f);
+                bullet.rigidbody.AddForce(f);
+                //bullet.rigidbody.velocity = f;
+                projectiles.Add(bullet);
+                shotCount++;
+            }
             }
             else
             {
