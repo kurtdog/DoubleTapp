@@ -9,7 +9,7 @@ public class ShieldShipController : MonoBehaviour {
 	public float rotationSpeed;
 	public float angle;
 	ShipController shipController;
-	LockWheelSc lockWheel;
+	MusicManager lockWheel;
 	CameraScript cameraScript;
 
 	public float xJoystick;
@@ -20,7 +20,7 @@ public class ShieldShipController : MonoBehaviour {
 	void Start () {
 	
 		shipController = ShooterShip.GetComponent<ShipController>();
-		lockWheel = LockWheel.GetComponent<LockWheelSc>();
+        lockWheel = LockWheel.GetComponent<MusicManager>();
 		cameraScript = camera.GetComponent<CameraScript>();
 		angle = 0;
 		radius = lockWheel.radius;

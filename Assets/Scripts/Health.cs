@@ -8,22 +8,43 @@ using System.Collections.Generic;
 public class Health : MonoBehaviour {
 
 	public List<GameObject> scrapComponents;
+    public GameObject HealthBar;
+    public int numHealthDivisions;
 	public float scrapScale;
 	public int health;
 	public int maxHealth;
-	public int scrapVelocity; 
+	public int scrapVelocity;
+    public bool showHealth;
 	public bool isDead = false;
 
+    private float initialHealthBarWidth;
+    private int lastHealth;
 	// Use this for initialization
 	void Start () {
 		health = maxHealth;
+        initialHealthBarWidth = 0;
+        if (HealthBar != null)
+        {
+            initialHealthBarWidth = HealthBar.transform.localScale.x;
+
+        }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
 
+        //if we've been damaged
+        if(health != lastHealth)
+        {
+            if (HealthBar != null)
+            {
+                float newWidth = initialHealthBarWidth * ((float)health / maxHealth);
+                //Debug.Log("Updating Healthbar: " + newWidth);
+                HealthBar.transform.localScale = new Vector3(newWidth, HealthBar.transform.localScale.y, HealthBar.transform.localScale.z);
+            }
+        }
+        lastHealth = health;
+	}
 
 	// Destroys this game object and spawns a random set of scrapComponents at a given scale.
 	// 
@@ -52,8 +73,11 @@ public class Health : MonoBehaviour {
 				//get a random index from the list
 				int rand = Random.Range(0,indexes.Count);
 
+                //get a random offset position
+                Vector3 offsetPosition = Random.insideUnitSphere;
+
 				//use it to spawn a scrap
-				GameObject scrap = GameObject.Instantiate(scrapComponents[rand],this.transform.position,this.transform.rotation) as GameObject;
+				GameObject scrap = GameObject.Instantiate(scrapComponents[rand],this.transform.position + offsetPosition,this.transform.rotation) as GameObject;
 				scrap.transform.localScale = this.transform.lossyScale*scrapScale;
 				scrap.rigidbody.AddTorque(this.rigidbody.angularVelocity);
 				Vector3 randomDirection = new Vector3(Random.value, Random.value, Random.value);
@@ -72,7 +96,7 @@ public class Health : MonoBehaviour {
 		{
 			Split ();
             //Debug.Log(this.gameObject.name + " is Dead");
-			//Destroy(this.gameObject);
+			Destroy(this.gameObject);
 
 			//TODO: if shipController.target == this.gameObject, shipController.target = null
 			//TODO: or even better, autoset the new target = to one of the scrapComponents

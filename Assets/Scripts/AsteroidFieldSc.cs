@@ -35,6 +35,8 @@ public class AsteroidFieldSc : Generator {
 			ast.transform.parent = this.transform;
 			float size = Random.Range(minSize,maxSize);
 
+            //ast.rigidbody.AddTorque(GetRandomTorque());
+
 			ast.transform.localScale += new Vector3(size,size,size);
 
 			spawnedObjects.Add(ast);

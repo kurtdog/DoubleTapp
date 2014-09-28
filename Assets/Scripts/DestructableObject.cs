@@ -23,6 +23,7 @@ public class DestructableObject : MonoBehaviour {
                 go.SetActive(false);
             }
             objectsDestroyed = true;
+            Destroy(this.gameObject);
         }
 	}
 }

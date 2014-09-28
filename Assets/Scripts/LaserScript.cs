@@ -43,18 +43,22 @@ public class LaserScript : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, length, layer))
 		{
+            Debug.Log("hit");
 			line.SetPosition(1, hit.point);
 			if(!hit.collider.isTrigger && !shipController.lockedOn) //if we aren't locked on, look for a new target
 			{
+                Debug.Log("hit2");
 				//hit.rigidbody.AddForceAtPosition(transform.forward* 10, hit.point);
-				if(shooterScript.target != null)
+                /*
+                if (shooterScript.target != null && shooterScript.target.renderer.material != null)
 				{
 					shooterScript.target.renderer.material = originalMat; // Unhighlight the last target
 				}
+                 * */
 				shooterScript.target = hit.collider.transform; // target = new target
-				originalMat = shooterScript.target.renderer.material; // record the items original material
-				highLightMat.mainTexture = originalMat.mainTexture; // copy the texture
-				shooterScript.target.renderer.material = highLightMat; //highlight the new target //color higlight
+				//originalMat = shooterScript.target.renderer.material; // record the items original material
+				//highLightMat.mainTexture = originalMat.mainTexture; // copy the texture
+				//shooterScript.target.renderer.material = highLightMat; //highlight the new target //color higlight
 
 			}
 		}

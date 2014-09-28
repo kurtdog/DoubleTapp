@@ -12,7 +12,8 @@ public class AIController_Editor : Editor {
         GUILayoutOption[] options = new GUILayoutOption[0];
 
         if (aiController.behaviors.Contains(AIController.Behavior.FREEROAM) ||
-            aiController.behaviors.Contains(AIController.Behavior.FLYSTRAIGHT))
+            aiController.behaviors.Contains(AIController.Behavior.FLYSTRAIGHT) ||
+            aiController.behaviors.Contains(AIController.Behavior.LOOPNEXTTOPLAYER))
         {
             aiController.acceleration = EditorGUILayout.FloatField("Acceleration:", aiController.acceleration);
             aiController.distance = EditorGUILayout.FloatField("Distance: ", aiController.distance); // this is somethin we want to show, not set..

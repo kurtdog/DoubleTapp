@@ -9,6 +9,7 @@ public class ShipController : MonoBehaviour {
 	//public GameObject Projectile;
 	//public GameObject ShotPosition;
 	public GameObject ShooterShip;
+    public GameObject thrustEffectGroup;
 	//public Transform shooterScript.target;
 	public float acceleration;
 	//public float maxSpeed;
@@ -34,7 +35,7 @@ public class ShipController : MonoBehaviour {
 	private float yJoystick;
 	private float xJoystick2;
 	private float yJoystick2;
-	private bool moving;
+
 
 
 	private float shotTimer;
@@ -134,6 +135,8 @@ public class ShipController : MonoBehaviour {
 			this.rigidbody.AddForce(this.transform.forward*acceleration*Input.GetAxis("Thrust"));
 
 		}
+
+
 		//Debug.Log("fire: " + Input.GetAxis("Fire1"));
 		if(Input.GetAxis("Fire1") > .5f )//leftTrigger
 		{
@@ -147,7 +150,13 @@ public class ShipController : MonoBehaviour {
 			this.rigidbody.AddForce(-this.transform.forward*acceleration);
 		}
 
-		
+
+
+        if (rigidbody.angularVelocity.magnitude > .1f)
+        {
+            rigidbody.AddTorque(-rigidbody.angularVelocity * rotationSlow * Time.fixedDeltaTime);
+            //Debug.Log("adding torque:");
+        }
 	}
 
 	/*
@@ -204,7 +213,7 @@ public class ShipController : MonoBehaviour {
 		yJoystick = Input.GetAxis("Vertical1");
 		xJoystick2 = Input.GetAxis("Horizontal2");
 		yJoystick2 = Input.GetAxis("Vertical2");
-		moving = false;
+		
 		
 		currentSpeed = rigidbody.velocity.magnitude; // view the velocity in the inspector
 		Vector3 force = new Vector3(0,0,0);
@@ -219,7 +228,6 @@ public class ShipController : MonoBehaviour {
 			
 			Vector3 torqueVector = Camera.main.transform.up*invX*xJoystick*currentRotationSpeed;
 			rigidbody.AddTorque(torqueVector);
-			moving = true;
 
 			//torqueVector = this.transform.forward*xJoystick*rotationSpeed3D; // barrel roll
 			//rigidbody.AddTorque(torqueVector);
@@ -230,16 +238,9 @@ public class ShipController : MonoBehaviour {
 		{
 			Vector3 torqueVector = Camera.main.transform.right*yJoystick*invY*currentRotationSpeed; 
 			rigidbody.AddTorque(torqueVector);
-			moving = true;
 		}
 
 
-		//otherwise
-		if(!moving)
-		{
-			//slow down the ship
-			SlowDown();
-		}
 	}
 
 	void twoDMovement()
@@ -250,7 +251,7 @@ public class ShipController : MonoBehaviour {
 		//xJoystick2 = Input.GetAxis("Horizontal2");
 		yJoystick2 = Input.GetAxis("Vertical2");
 		//Debug.Log("yjoystick2 " + yJoystick2);
-		moving = false;
+		//moving = false;
 
 		Viewpoint currentViewpoint = cameraScript.currentView.GetComponent<ViewPointScript>().viewPoint;
 		//third person controls
@@ -265,7 +266,6 @@ public class ShipController : MonoBehaviour {
 				float yRotation = yJoystick*rotationSpeed2D;//*(100.0f/distance);
 				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.up,-xRotation);
 				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.right,-yRotation);
-				moving = true;
 			}
 			if(Mathf.Abs(yJoystick2) > joystickThreshold)
 			{
@@ -273,7 +273,6 @@ public class ShipController : MonoBehaviour {
 				float force = acceleration*-yJoystick2;
 				Debug.Log("force: " + force);
 				this.rigidbody.AddForce(this.transform.forward*force);
-				moving = true;
 			}
 
 	
@@ -287,7 +286,6 @@ public class ShipController : MonoBehaviour {
 				Vector3 MovementVector = camera.transform.right*xJoystick;// + camera.transform.up*-yJoystick;
 				Vector3 force = MovementVector*twoDspeed;//*Time.fixedDeltaTime;
 				rigidbody.AddForce(force);
-				moving = true;
 
 			}
 			if(Mathf.Abs(yJoystick) > joystickThreshold ) 
@@ -296,8 +294,7 @@ public class ShipController : MonoBehaviour {
 				float yRotation = yJoystick*rotationSpeed2D;
 				//Debug.Log("yRotation: " + yRotation);
 				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.forward,yRotation);
-				
-				moving = true;
+
 			}
 			
 		}
@@ -309,7 +306,6 @@ public class ShipController : MonoBehaviour {
 				Vector3 MovementVector = camera.transform.right*xJoystick;// + camera.transform.up*-yJoystick;
 				Vector3 force = MovementVector*twoDspeed;//*Time.fixedDeltaTime;
 				rigidbody.AddForce(force);
-				moving = true;
 				
 			}
 			if(Mathf.Abs(yJoystick) > joystickThreshold ) 
@@ -318,8 +314,6 @@ public class ShipController : MonoBehaviour {
 				float yRotation = yJoystick*rotationSpeed2D;
 				//Debug.Log("yRotation: " + yRotation);
 				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.forward,-yRotation);
-				
-				moving = true;
 			}
 			
 		}
@@ -331,7 +325,6 @@ public class ShipController : MonoBehaviour {
 				float xRotation = xJoystick*rotationSpeed2D;
 				//Debug.Log("xRotation: " + xRotation);
 				transform.RotateAround(shooterScript.target.transform.position,Camera.main.transform.forward,xRotation);
-				moving = true;
 			}
 			if(Mathf.Abs(yJoystick) > joystickThreshold ) 
 			{
@@ -339,33 +332,16 @@ public class ShipController : MonoBehaviour {
 				Vector3 MovementVector = camera.transform.up*-yJoystick;// + camera.transform.up*-yJoystick;
 				Vector3 force = MovementVector*twoDspeed;//*Time.fixedDeltaTime;
 				rigidbody.AddForce(force);
-				moving = true;
 			}
 			
 		}
 
-		if(!moving)
-		{
-			SlowDown();
-		}
+
 	
 	
 	}
 
-	void SlowDown()
-	{
-		if(rigidbody.velocity.magnitude > .1f)
-		{
-			rigidbody.AddForce(-rigidbody.velocity*acceleration*Time.fixedDeltaTime);
-			//Debug.Log(shipType.ToString() +" slowing down");
-		}
 
-		if(rigidbody.angularVelocity.magnitude > .1f)
-		{
-			rigidbody.AddTorque(-rigidbody.angularVelocity*rotationSlow*Time.fixedDeltaTime);
-			//Debug.Log("adding torque:");
-		}
-	}
 
 
 }

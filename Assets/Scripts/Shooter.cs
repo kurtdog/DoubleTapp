@@ -6,6 +6,9 @@ using System.Collections.Generic;
 public class Shooter : MonoBehaviour {
 
 	public GameObject ShotPointNetwork;
+    public GameObject targetReticlePrefab;
+    GameObject targetReticle;
+    public GameObject ShooterShip;
 	public Transform target;
 	public GameObject projectile;
 	public int shotCount;
@@ -14,6 +17,8 @@ public class Shooter : MonoBehaviour {
 	public ShotType shotType;
 	public enum ShotType{StraightShot,Homing};
 	private List<GameObject> projectiles;
+
+    public float reticleDistance;
 
 	PointNetwork shotPointNetwork;
 	// Use this for initialization
@@ -25,6 +30,8 @@ public class Shooter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		shotTimer += Time.fixedDeltaTime;
+
+        MoveReticle();
 	}
 
 	public void Shoot()
@@ -61,4 +68,36 @@ public class Shooter : MonoBehaviour {
 
 	}
 
+    void MoveReticle()
+    {
+        if (target != null)
+        {
+            if (targetReticle == null) // if we don't have a reticle already
+            {
+                //create one
+                targetReticle = Instantiate(targetReticlePrefab,target.transform.position,target.transform.rotation) as GameObject;
+            }
+            Vector3 towardsTarget = target.transform.position - ShooterShip.transform.position;
+            Debug.Log(target.transform.lossyScale.magnitude + " " + reticleDistance);
+            targetReticle.transform.position = ShooterShip.transform.position + towardsTarget.normalized * reticleDistance;
+            targetReticle.transform.LookAt(ShooterShip.transform.position);
+        }
+        else if (targetReticle != null) // if we have a reticle, but we've destroyed our target
+        {
+            Destroy(targetReticle); //destroy the reticle
+        }
+    }
+
+    /*
+    void MoveReticle()
+    {
+        if(target != null)
+        {
+            Vector3 towardsPlayer = ShooterShip.transform.position-  target.transform.position;
+            Debug.Log(target.transform.lossyScale.magnitude + " " + reticleDistance);
+            targetReticle.transform.position = target.transform.position + towardsPlayer.normalized * reticleDistance;
+            targetReticle.transform.LookAt(ShooterShip.transform.position);
+        }
+    }
+     * */
 }

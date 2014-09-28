@@ -46,6 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AudioTrigger.cs" />
+     <Compile Include="Assets\Chardae.cs" />
+     <Compile Include="Assets\ParticleSizeByVelocity.cs" />
+     <Compile Include="Assets\Rotate.cs" />
      <Compile Include="Assets\Scripts\AIController.cs" />
      <Compile Include="Assets\Scripts\AssetBuilder.cs" />
      <Compile Include="Assets\Scripts\AsteroidBeltSc.cs" />
@@ -62,9 +66,9 @@
      <Compile Include="Assets\Scripts\HealthLine.cs" />
      <Compile Include="Assets\Scripts\LaserBeam.cs" />
      <Compile Include="Assets\Scripts\LaserScript.cs" />
-     <Compile Include="Assets\Scripts\LockWheelSc.cs" />
      <Compile Include="Assets\Scripts\MeshColor.cs" />
      <Compile Include="Assets\Scripts\MeteorShower.cs" />
+     <Compile Include="Assets\Scripts\MusicManager.cs" />
      <Compile Include="Assets\Scripts\ParticleCollider.cs" />
      <Compile Include="Assets\Scripts\ParticleGenerator.cs" />
      <Compile Include="Assets\Scripts\ParticleScript.cs" />

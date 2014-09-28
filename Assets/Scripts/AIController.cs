@@ -18,6 +18,9 @@ public class AIController : MonoBehaviour {
     [HideInInspector] public float acceleration;
     [HideInInspector] public float distance;
     //Rotation
+    public int loopDistance;
+    public float loopSpeed;
+    public int loopRadius;
     [HideInInspector] public float rotationSpeed; // for AiState(Rotate)
     public Vector3 rotationAxis; //TODO: figure out vector3 custom inspector
     //Spawning
@@ -29,7 +32,7 @@ public class AIController : MonoBehaviour {
     [HideInInspector]
     public float unloadTime; //Unload, UNLOAD's only purpose is to show 'unloadTime'
 
-    public enum Behavior { FREEROAM, SHOOTATPLAYER, FLYSTRAIGHT ,LOOKATPLAYER, ROTATE, SPAWNENEMIES, UNLOAD }; // General Actions that AI's can perform
+    public enum Behavior { FREEROAM, SHOOTATPLAYER, FLYSTRAIGHT ,LOOKATPLAYER, ROTATE, SPAWNENEMIES, UNLOAD, LOOPNEXTTOPLAYER }; // General Actions that AI's can perform
 
     PointNetwork shotPointNetwork;
     PointNetwork spawnPointNetwork;
@@ -41,6 +44,9 @@ public class AIController : MonoBehaviour {
     private float unloadTimer;
     private int shotCount;
     private int spawnCount;
+    private bool looping;
+    private float angleLooped;
+    private Vector3 loopPosition;
 	//public enum FreeRoamMethod (STAYPUT,PATROL,GORANDOMDIR)
 	/*
 	 *  Note, we should have a dropDown of attack methods, flight patters, etc
@@ -52,8 +58,15 @@ public class AIController : MonoBehaviour {
 	 */ 
 	// Use this for initialization
 	void Start () {
-        shotPointNetwork = ShotPointNetwork.GetComponent<PointNetwork>();
-        spawnPointNetwork = SpawnPointNetwork.GetComponent<PointNetwork>();
+        if(behaviors.Contains(Behavior.SHOOTATPLAYER))
+        {
+            shotPointNetwork = ShotPointNetwork.GetComponent<PointNetwork>();
+        }
+        if (behaviors.Contains(Behavior.SPAWNENEMIES))
+        {
+            spawnPointNetwork = SpawnPointNetwork.GetComponent<PointNetwork>();
+        }
+        loopPosition = PlayerShip.transform.position;
 		projectiles = new List<GameObject>();
         enemies = new List<GameObject>();
         shotTimer = 0;
@@ -62,6 +75,8 @@ public class AIController : MonoBehaviour {
         shotCount = 0;
         spawnCount = 0;
 
+        looping = false;
+        angleLooped = 0;
 	}
 	
 	// Update is called once per frame
@@ -96,6 +111,26 @@ public class AIController : MonoBehaviour {
                 FlyStraight();
             }
 
+            if (behaviors.Contains(Behavior.LOOPNEXTTOPLAYER))
+            {
+                //
+                if (distance < loopDistance)
+                {
+                    looping = true;
+                    loopPosition = PlayerShip.transform.position + loopDistance * PlayerShip.transform.forward;
+                }
+
+                if(looping == false)
+                {
+                    FlyStraight();
+                    this.transform.LookAt(PlayerShip.transform.position);
+                }
+                else // Chase
+                {
+                    Loop();
+                }
+            }
+
             if (behaviors.Contains(Behavior.SHOOTATPLAYER))
             {
                 ShootAtPlayer();
@@ -120,11 +155,29 @@ public class AIController : MonoBehaviour {
         }
 	}
 
+    void Loop()
+    {
+        FlyStraight();
+        angleLooped += loopSpeed;
+        Debug.Log("AngleLooped: " + (int)angleLooped);
+       
+        this.transform.Rotate(this.transform.right, loopSpeed);
+        this.transform.RotateAround(loopPosition,this.transform.right,loopSpeed);
+        
+        if(angleLooped >= 300)
+        {
+            looping = false;
+            angleLooped = 0;
+        }
+    }
+
     void Rotate()
     {
 
         this.transform.Rotate(rotationAxis, rotationSpeed * Time.fixedDeltaTime);
     }
+
+
 
     void SpawnEnemies()
     {
@@ -205,7 +258,7 @@ public class AIController : MonoBehaviour {
 	{
 		//Debug.Log("Flying");
         Vector3 targetDirection = PlayerShip.transform.position - this.transform.position;
-        this.transform.LookAt(PlayerShip.transform.position); // LookAt the target
+        this.transform.LookAt(ShooterShipTransform.transform.position); // LookAt the target
 
 	}
     void FlyStraight()
