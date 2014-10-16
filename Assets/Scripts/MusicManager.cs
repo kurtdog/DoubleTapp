@@ -68,7 +68,7 @@ public class MusicManager : MonoBehaviour {
         if(beatTimer >= 8.33334f)
         {
             beatTimer = 0;
-            Debug.Log("Bumpity Bump Son");
+           // Debug.Log("Bumpity Bump Son");
         }
 
         if(fadeTrack)

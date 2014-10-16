@@ -79,6 +79,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\PlanetaryTerrain\Scripts\Editor\Gradient\GUIGradientField.cs" />
+    <Compile Include="Assets\PlanetaryTerrain\Scripts\Editor\Gradient\GradientWrapper.cs" />
+    <Compile Include="Assets\PlanetaryTerrain\Scripts\Editor\ModuleEditorWindow.cs" />
+    <Compile Include="Assets\PlanetaryTerrain\Scripts\Editor\NodeWindow.cs" />
+    <Compile Include="Assets\PlanetaryTerrain\Scripts\Editor\PlacementHelperEditor.cs" />
+    <Compile Include="Assets\PlanetaryTerrain\Scripts\Editor\PlanetEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\AIController_Editor.cs" />
     <Compile Include="Assets\VisualizerStudio\Editor\Base\VisBasePropertyModifierEditor.cs" />
     <Compile Include="Assets\VisualizerStudio\Editor\Base\VisBasePropertyTriggerEditor.cs" />
@@ -106,6 +112,27 @@
     <Compile Include="Assets\VisualizerStudio\Editor\Utility\VisMicrophoneEditor.cs" />
     <None Include="Assets\10+1 StandartMaterials\Shaders\Shader1.shader" />
     <None Include="Assets\10+1 StandartMaterials\Shaders\Shader2.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Atmosphere\Atmosphere Inverted.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Foliage\SoftOcclusion\SH_Vertex.cginc" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Foliage\SoftOcclusion\TreeSoftOcclusionLeaves.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\BumpedPlanet.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\BumpedPlanetColorMap.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\BumpedPlanetPoleTexture.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\Colored Planet Unpacked.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\Normal-Diffuse NoFog.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\Particle Add NoFog.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\TexturedPlanet.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\TexturedPlanetColorMap.shader" />
+    <None Include="Assets\PlanetaryTerrain\Graphics\Water\Water.shader" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\AdvancedMountains.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\Crater.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\FoliagePerlin.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\IQ.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\Massive.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\Max.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\MyFirstModule.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\Small.txt" />
+    <None Include="Assets\PlanetaryTerrain\Resources\Modules\TextureLoad.txt" />
     <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
     <None Include="Assets\VisualizerStudio\Editor\VisualizerStudioEditor.xml" />

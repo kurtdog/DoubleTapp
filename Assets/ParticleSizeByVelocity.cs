@@ -20,7 +20,7 @@ public class ParticleSizeByVelocity : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        float size = Mathf.Min(1,((Ship.rigidbody.velocity.magnitude*2) / shipController.acceleration));
+        float size = Mathf.Min(1,((Ship.rigidbody.velocity.magnitude*2) / shipController.speed));
         //Debug.Log(size);
         particleSystem.startSize = originalStartSize*size;
         

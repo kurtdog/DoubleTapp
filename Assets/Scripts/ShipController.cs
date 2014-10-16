@@ -11,7 +11,8 @@ public class ShipController : MonoBehaviour {
 	public GameObject ShooterShip;
     public GameObject thrustEffectGroup;
 	//public Transform shooterScript.target;
-	public float acceleration;
+	public float speed;
+    public float hyperSpeed;
 	//public float maxSpeed;
 	public float currentSpeed;
 	public float fireRate;
@@ -132,9 +133,16 @@ public class ShipController : MonoBehaviour {
 
 		if(Input.GetAxis("Thrust") > .5f)//rightTrigger
 		{
-			this.rigidbody.AddForce(this.transform.forward*acceleration*Input.GetAxis("Thrust"));
+			this.rigidbody.AddForce(this.transform.forward*speed*Input.GetAxis("Thrust"));
 
 		}
+
+        if (Input.GetButton("HyperThrust"))//rightTrigger
+        {
+            this.rigidbody.AddForce(this.transform.forward * hyperSpeed);
+            Debug.Log("Pressing");
+
+        }
 
 
 		//Debug.Log("fire: " + Input.GetAxis("Fire1"));
@@ -147,7 +155,7 @@ public class ShipController : MonoBehaviour {
 		//iff pressing back, and thrust, move backwards
 		if(Input.GetButton("Thrust") && xJoystick < 0)
 		{
-			this.rigidbody.AddForce(-this.transform.forward*acceleration);
+			this.rigidbody.AddForce(-this.transform.forward*speed);
 		}
 
 
@@ -209,8 +217,8 @@ public class ShipController : MonoBehaviour {
 	void threeDMovement()
 	{
 		//Debug.Log("3D Movement");
-		xJoystick = Input.GetAxis("Horizontal1");
-		yJoystick = Input.GetAxis("Vertical1");
+		xJoystick = Input.GetAxis("Horizontal");
+		yJoystick = Input.GetAxis("Vertical");
 		xJoystick2 = Input.GetAxis("Horizontal2");
 		yJoystick2 = Input.GetAxis("Vertical2");
 		
@@ -270,7 +278,7 @@ public class ShipController : MonoBehaviour {
 			if(Mathf.Abs(yJoystick2) > joystickThreshold)
 			{
 				//use R-Joystick to move in and out
-				float force = acceleration*-yJoystick2;
+				float force = speed*-yJoystick2;
 				Debug.Log("force: " + force);
 				this.rigidbody.AddForce(this.transform.forward*force);
 			}

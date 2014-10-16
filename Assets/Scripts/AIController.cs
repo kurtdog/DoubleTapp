@@ -21,6 +21,7 @@ public class AIController : MonoBehaviour {
     public int loopDistance;
     public float loopSpeed;
     public int loopRadius;
+    public int numLoops;
     [HideInInspector] public float rotationSpeed; // for AiState(Rotate)
     public Vector3 rotationAxis; //TODO: figure out vector3 custom inspector
     //Spawning
@@ -117,7 +118,8 @@ public class AIController : MonoBehaviour {
                 if (distance < loopDistance)
                 {
                     looping = true;
-                    loopPosition = PlayerShip.transform.position + loopDistance * PlayerShip.transform.forward;
+                    this.rigidbody.velocity = new Vector3(0, 0, 0);
+                    loopPosition = this.transform.position + loopDistance * this.transform.up.normalized;// loop around a point 'loopDistance' above the initial encounter point  
                 }
 
                 if(looping == false)
@@ -157,19 +159,20 @@ public class AIController : MonoBehaviour {
 
     void Loop()
     {
-        FlyStraight();
+        //FlyStraight();
         angleLooped += loopSpeed;
-        Debug.Log("AngleLooped: " + (int)angleLooped);
+        //Debug.Log("AngleLooped: " + (int)angleLooped);
        
-        this.transform.Rotate(this.transform.right, loopSpeed);
-        this.transform.RotateAround(loopPosition,this.transform.right,loopSpeed);
+        //this.transform.Rotate(this.transform.right, loopSpeed);
+        this.transform.RotateAround(loopPosition,this.transform.right,-loopSpeed);
         
-        if(angleLooped >= 300)
+        if(angleLooped >= 360*numLoops)
         {
             looping = false;
             angleLooped = 0;
         }
     }
+
 
     void Rotate()
     {
@@ -219,11 +222,11 @@ public class AIController : MonoBehaviour {
 	void ShootAtPlayer()
 	{
         
-		if(shotTimer > 1/fireRate)
+		if(shotTimer > 1/fireRate && distance <= fireDistance)
 		{
             if(shotCount < shotPointNetwork.points.Count)
             {
-            //Debug.Log("Shooting");
+            Debug.Log("Shooting");
             GameObject shotPoint = shotPointNetwork.points[shotCount];
             if (shotPoint.activeSelf)
             {

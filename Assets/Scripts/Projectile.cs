@@ -25,20 +25,20 @@ public class Projectile : MonoBehaviour {
         {
             Ray ray = new Ray(this.transform.position, this.transform.forward);
             RaycastHit hit;
-            Debug.Log("CastingRay");
+//            Debug.Log("CastingRay");
             //for some reason my lasers are hitting each other!
             //either cast 1 ray for multiple lasers... or figure something else out
             if (Physics.Raycast(ray, out hit, rayCastLenght, destructableLayer))
             {
-                Debug.Log("RayCastHit!");
+               // Debug.Log("RayCastHit!");
                 if (hit.collider.gameObject.GetComponent<Health>() != null) // we don't want to hurt ourself
                 {
-                    Debug.Log("Damaging " + hit.collider.gameObject.name);
+                   // Debug.Log("Damaging " + hit.collider.gameObject.name);
                     hit.collider.gameObject.GetComponent<Health>().Damage(damage); //apply damage
                 }
                 else
                 {
-                    Debug.Log("No Health Script attached to the collider object: " + hit.collider.gameObject.name);
+                    //Debug.Log("No Health Script attached to the collider object: " + hit.collider.gameObject.name);
                 }
                 hitDistance = Vector3.Distance(this.transform.position,hit.collider.gameObject.transform.position);
                 startPosition = this.transform.position;
@@ -72,9 +72,8 @@ public class Projectile : MonoBehaviour {
                 //Debug.Log("not parent");
                 if (col.gameObject.GetComponent<Health>() != null) // we don't want to hurt ourself
                 {
-                    //Debug.Log("hit Game Item");
+                    Debug.Log("hit Game Item");
                     col.gameObject.GetComponent<Health>().Damage(damage); //apply damage
-
                 }
                 Destroy(this.gameObject);
             }

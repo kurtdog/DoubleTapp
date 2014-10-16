@@ -21,12 +21,15 @@ public class Health : MonoBehaviour {
     private int lastHealth;
 	// Use this for initialization
 	void Start () {
-		health = maxHealth;
+		//health = maxHealth;
         initialHealthBarWidth = 0;
         if (HealthBar != null)
         {
             initialHealthBarWidth = HealthBar.transform.localScale.x;
 
+            // initially scale the healthbar, for testing we might not always start with full health
+            float newWidth = initialHealthBarWidth * ((float)health / maxHealth);
+            HealthBar.transform.localScale = new Vector3(newWidth, HealthBar.transform.localScale.y, HealthBar.transform.localScale.z);
         }
 	}
 	
@@ -96,8 +99,13 @@ public class Health : MonoBehaviour {
 		{
 			Split ();
             //Debug.Log(this.gameObject.name + " is Dead");
-			Destroy(this.gameObject);
-
+           
+            // we only want to destroy this if it doesn't have a list of destructable objects
+            //otherwise it destroys this item first, and then none of the destructable objects get destroyed
+			if(this.GetComponent<DestructableObject>() == null) 
+            {
+                Destroy(this.gameObject);
+            }
 			//TODO: if shipController.target == this.gameObject, shipController.target = null
 			//TODO: or even better, autoset the new target = to one of the scrapComponents
 		}
