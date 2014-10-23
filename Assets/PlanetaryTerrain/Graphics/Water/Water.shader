@@ -22,7 +22,7 @@ _BumpMap("Normalmap", 2D) = "bump" {}
 	{
 		Tags
 		{
-"Queue"="Transparent+100"
+"Queue"="Geometry"
 "IgnoreProjector"="False"
 "RenderType"="Transparent"
 

@@ -46,6 +46,10 @@ public class GameController : MonoBehaviour {
             {
                 newObject.GetComponent<Generator>().assetBuilder = this.assetBuilder;
             }
+            if (newObject.GetComponent<MeteorShower>() != null)
+            {
+                newObject.GetComponent<MeteorShower>().Shooter = Shooter;
+            }
         }
         
 

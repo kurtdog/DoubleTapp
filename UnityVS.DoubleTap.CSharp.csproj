@@ -167,6 +167,7 @@
     <Compile Include="Assets\Scripts\Shooter.cs" />
     <Compile Include="Assets\Scripts\Star.cs" />
     <Compile Include="Assets\Scripts\ViewPointScript.cs" />
+    <Compile Include="Assets\ShaderLayer.cs" />
     <Compile Include="Assets\VisualizerStudio\Example Level\KillTimer.cs" />
     <Compile Include="Assets\VisualizerStudio\Example Level\TestBallSpawnScalar.cs" />
     <Compile Include="Assets\VisualizerStudio\Scripts\Base\VisBasePropertyModifier.cs" />
@@ -217,6 +218,7 @@
     <None Include="Assets\PlanetaryTerrain\Resources\Modules\MyFirstModule.txt" />
     <None Include="Assets\PlanetaryTerrain\Resources\Modules\Small.txt" />
     <None Include="Assets\PlanetaryTerrain\Resources\Modules\TextureLoad.txt" />
+    <None Include="Assets\Prefabs\Planets\MyFirstModule.txt" />
     <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
     <None Include="Assets\VisualizerStudio\Editor\VisualizerStudioEditor.xml" />

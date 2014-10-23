@@ -5,14 +5,15 @@ using System.Collections.Generic;
 public class CameraScript : MonoBehaviour {
 
 	public GameObject Ship;
-	public GameObject ShooterShip;
 	private GameObject ShooterTarget;
 	public GameObject ViewPointNetwork;
 	public GameObject currentView;
 	public float adjustmentSpeed;
 	public float movementSpeed;
 	public float lerpSpeed;
-	public float lerpTreshold;
+	public float lerpStartThreshold;
+    public float lerpEndThreshold;
+    private bool lerp = false;
 
 	private GameObject sideViewL;
 	private GameObject sideViewR;
@@ -42,7 +43,7 @@ public class CameraScript : MonoBehaviour {
 	void Start () {
 		InitializeViewpointObjects();
 		distanceFromShooter = Vector3.Distance(this.transform.position,currentView.transform.position);
-		offset = ShooterShip.transform.position - thirdPersonView.transform.position;
+		offset = Ship.transform.position - thirdPersonView.transform.position;
 		currentView = thirdPersonView;
 		SwitchViewPoints(currentView); // switch to our selected viewpoint
 		shipController = Ship.GetComponent<ShipController>();
@@ -84,7 +85,7 @@ public class CameraScript : MonoBehaviour {
 	// return true if the shootership and it's target are on screen, false otherwise
 	bool ItemsOnScreen()
 	{
-		if(ShooterShip.renderer.isVisible && Ship.GetComponent<Shooter>().target.renderer.isVisible)
+		if(Ship.renderer.isVisible && Ship.GetComponent<Shooter>().target.renderer.isVisible)
 		{
 			return true;
 		}
@@ -98,7 +99,7 @@ public class CameraScript : MonoBehaviour {
 	void LerpDistance()
 	{
 		//get the distance of the two objects
-		float shipToTarget = Vector3.Distance(ShooterShip.transform.position,Ship.GetComponent<Shooter>().target.transform.position);
+		float shipToTarget = Vector3.Distance(Ship.transform.position,Ship.GetComponent<Shooter>().target.transform.position);
 		// we want worldDistance/cameraDistance = zoom. therefor cameraDistance = worldDist/zoom
 		float cameraDistance;
 		if(zoom != 0)
@@ -116,7 +117,7 @@ public class CameraScript : MonoBehaviour {
 
 		//Debug.Log("cameraDist: " + cameraDistance);
 		//hardsetCamera
-		Vector3 midpoint =ShooterShip.transform.position + ShooterShip.transform.forward*shipToTarget/2; // halfway between the ship and it's target, 
+		Vector3 midpoint =Ship.transform.position + Ship.transform.forward*shipToTarget/2; // halfway between the ship and it's target, 
 		currentView.transform.position = midpoint - this.transform.forward*(cameraDistance); // + z distance
 		/*
 		 //Lerp Camera 
@@ -143,7 +144,7 @@ public class CameraScript : MonoBehaviour {
 
 		if(currentView == thirdPersonView)
 		{
-			transform.position = ShooterShip.transform.position - (Camera.main.transform.rotation * offset);
+			transform.position = Ship.transform.position - (Camera.main.transform.rotation * offset);
 		}
 		else{
 			transform.position = currentView.transform.position;
@@ -156,24 +157,16 @@ public class CameraScript : MonoBehaviour {
 	//Slowly Lerp Back towards thirdPersonView
 	void LerpRotation()
 	{
-		int pitchSign = 1;
-		if(this.transform.up.x < 0)
-		{
-			pitchSign = -1;
-		}
+        float xJoystick = Input.GetAxis("Horizontal");
+        float yJoystick = Input.GetAxis("Vertical");
+
+
 		int yawSign = 1;
 		if(this.transform.forward.x < 0)
 		{
 			yawSign = -1;
 		}
-        int rollSign = 1;
-        if(this.transform.right.x < 0)
-        {
-            rollSign = -1;
-        }
-		pitch = pitchSign*Vector3.Angle(ShooterShip.transform.up,this.transform.up);
-		yaw = yawSign*Vector3.Angle(ShooterShip.transform.forward,this.transform.forward);
-        roll = rollSign*Vector3.Angle(ShooterShip.transform.right,this.transform.right);
+		yaw = yawSign*Vector3.Angle(Ship.transform.forward,this.transform.forward);
 		//Vector3.Lerp(this.transform.up,ShooterShip.transform.up,sign*lerpSpeed);
 		//Debug.Log("Distance: ( " + xDistance + " , " + yDistance + " )  upAngle: " + upAngle +" forwardAngle: " + forwardAngle);
 		//Debug.Log("pitch: " + pitch +" yaw: " + yaw + " roll: " + roll);// + " DeltaYaw " + Mathf.Abs(yaw-lastYaw));
@@ -183,18 +176,46 @@ public class CameraScript : MonoBehaviour {
 		//stepSize
 		float step = lerpSpeed*Time.deltaTime;
 
-		if(Mathf.Abs(yaw-lastYaw) > lerpTreshold  ) //|| Mathf.Abs(yaw) > 5f
+		if(Mathf.Abs(yaw) > lerpStartThreshold) //lerp when the yaw is > than our start threshold. //Mathf.Abs(yaw-lastYaw) > lerpTreshold 
 		{
-			Vector3 newForward = Vector3.RotateTowards(this.transform.forward,ShooterShip.transform.forward,step,0.0f);
-			transform.rotation = Quaternion.LookRotation(newForward);
-			
+            Debug.Log("start");
+            lerp = true;
+
 		}
-		else if(Mathf.Abs(roll) > 5  ) // only fix roll whne not fixing yaw
+        if (Mathf.Abs(yaw) < lerpEndThreshold)//stop lerp when the yaw is < than our end threshold. 
+        {
+            Debug.Log("end");
+            lerp = false;
+        }
+
+        if(lerp)
+        {
+            //TODO: I think the lerping problems are stemming form this rotateTowards part.
+            //Basically doing a 'lookAt' // this is old shitty code, but it works lol
+            Vector3 newForward = Vector3.RotateTowards(this.transform.forward, Ship.transform.forward, step, 0.0f);
+            transform.rotation = Quaternion.LookRotation(newForward);
+        }
+		else if(Mathf.Abs(xJoystick) < .6 && Mathf.Abs(yJoystick) < .6)// only fix roll whne not fixing yaw
 		{
-            //Vector3 newUp = Vector3.RotateTowards(this.transform.up, ShooterShip.transform.up, step, 0.0f);
-           // transform.rotation = Quaternion.LookRotation(newForward);
-           // this.transform.Rotate(ShooterShip.transform.forward, rollSign*lerpSpeed);
-            //Debug.Log("Rolling");
+
+            //SPIN THE CAMERA TO line up with the plaer
+            int rollSign = 1;
+            Vector3 rollCheck = Vector3.Cross(this.transform.up, Ship.transform.up);
+            float vectorCompare = (rollCheck.normalized - Ship.transform.forward.normalized).magnitude;
+            if (vectorCompare > 1)
+            {
+                rollSign = -1;
+            }
+            // Debug.Log("RotateClockwise");
+            roll = rollSign * Vector3.Angle(Ship.transform.up, this.transform.up);
+            pitch = Vector3.Angle(this.transform.forward, Ship.transform.forward);
+            Debug.Log("Roll:" + roll + " Pitch:" + pitch);
+            if (Mathf.Abs(pitch) < 5 && Mathf.Abs(roll) > 2) //&& Mathf.Abs(xJoystick2) < .5// if the camera is ligned up AND we need to roll to adjust our up direction..
+            {
+                //Rotate the ship to face up.
+                Debug.Log("Rotating");
+                this.transform.RotateAround(this.transform.position, this.transform.forward, 2 * rollSign);
+            }
 		}
 		lastYaw = yaw;
         lastRoll = roll;
@@ -287,35 +308,28 @@ public class CameraScript : MonoBehaviour {
 		//Debug.Log("ThirdPerson Camera");
 		//Camera.main.transform.LookAt(ShooterShip.transform.position);
 		//currentView.transform.forward = (this.transform.position - ShooterShip.transform.position);
-		
-		float xJoystick;// = -Input.GetAxis("Horizontal2");
-		float yJoystick;// = -Input.GetAxis("Vertical2");
-		if(invertedX)
-		{
-			xJoystick = Input.GetAxis("Horizontal2");
-		}
-		else{
-			xJoystick = -Input.GetAxis("Horizontal2");
-		}
-		if(invertedY)
-		{
-			yJoystick = Input.GetAxis("Vertical2");
-		}
-		else{
-			yJoystick = -Input.GetAxis("Vertical2");
-		}
+       
+       // float xJoystick = Input.GetAxis("Horizontal");
+        //float yJoystick = Input.GetAxis("Vertical");
+		float xJoystick2 = Input.GetAxis("Horizontal2");
+		float yJoystick2 = Input.GetAxis("Vertical2");
+
 		
 		
 		Vector3 xAxis = Camera.main.transform.right;
 		Vector3 yAxis = Camera.main.transform.up;
+
 		
-		if(Mathf.Abs(xJoystick) > .8f || Mathf.Abs(yJoystick) > .8f)
+		if(Mathf.Abs(xJoystick2) > .8f || Mathf.Abs(yJoystick2) > .8f)
 		{
 			//Debug.Log("rotating x by : " + xJoystick*movementSpeed);
 			//Debug.Log("rotating y by : " + yJoystick*movementSpeed);
-			Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xJoystick*movementSpeed); // move the camera point
-			Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yJoystick*movementSpeed);
-			//currentView.transform.LookAt(ShooterShip.transform.position);//
+            //COMMENTED OUT FOR SHIPCONTROLLER - SPIN MOVE
+            /*
+			Camera.main.transform.RotateAround(ShooterShip.transform.position,yAxis,xJoystick2*movementSpeed); // move the camera point
+			Camera.main.transform.RotateAround(ShooterShip.transform.position,xAxis,yJoystick2*movementSpeed);
+			*/
+            //currentView.transform.LookAt(ShooterShip.transform.position);//
 			
 		}
 		else{

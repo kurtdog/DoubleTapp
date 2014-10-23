@@ -84,7 +84,7 @@ public class Health : MonoBehaviour {
 				scrap.transform.localScale = this.transform.lossyScale*scrapScale;
 				scrap.rigidbody.AddTorque(this.rigidbody.angularVelocity);
 				Vector3 randomDirection = new Vector3(Random.value, Random.value, Random.value);
-				scrap.rigidbody.AddForce(this.rigidbody.velocity*scrapVelocity+randomDirection*scrapVelocity); //velocity + velocityDirection*scrapVelocity
+				scrap.rigidbody.AddForce(randomDirection*scrapVelocity); //velocity + velocityDirection*scrapVelocity
 				//remove the index from the list
 				indexes.Remove(rand);
 			}

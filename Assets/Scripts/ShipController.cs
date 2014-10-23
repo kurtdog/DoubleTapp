@@ -21,6 +21,7 @@ public class ShipController : MonoBehaviour {
 	public float twoDspeed;
 	public float rotationSlow;
 	public float rotationSpeed3D;
+    public float rollSpeed;
 	public float aimRotationSpeed;
 	public float rotationSpeed2D;
 	private float currentRotationSpeed;
@@ -249,13 +250,19 @@ public class ShipController : MonoBehaviour {
 		}
 
 
+        //SPIN MOVE USING JOYSTICK
+        if (Mathf.Abs(xJoystick2) > .8f)
+        {
+            this.transform.RotateAround(this.transform.position, this.transform.forward, rollSpeed * -xJoystick2);
+        }
+
 	}
 
 	void twoDMovement()
 	{
 		//Debug.Log("2D Movement");
-		xJoystick = Input.GetAxis("Horizontal1");
-		yJoystick = Input.GetAxis("Vertical1");
+		xJoystick = Input.GetAxis("Horizontal");
+		yJoystick = Input.GetAxis("Vertical");
 		//xJoystick2 = Input.GetAxis("Horizontal2");
 		yJoystick2 = Input.GetAxis("Vertical2");
 		//Debug.Log("yjoystick2 " + yJoystick2);

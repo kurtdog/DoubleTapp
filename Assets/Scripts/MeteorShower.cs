@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class MeteorShower : Generator {
 
+    public GameObject Shooter;
 	public List<GameObject> meteors;
 	public int radius;
 	public float minSize;
@@ -12,7 +13,7 @@ public class MeteorShower : Generator {
 	public int meteorSpeed;
 	public float particleSize;
 	public float particleLife;
-	public GameObject Shooter;
+
 
 	public bool pointAtPlayer;
 

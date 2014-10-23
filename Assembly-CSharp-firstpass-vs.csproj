@@ -74,6 +74,7 @@
      <None Include="Assets\PlanetaryTerrain\Resources\Modules\Massive.txt" />
      <None Include="Assets\PlanetaryTerrain\Resources\Modules\AdvancedMountains.txt" />
      <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\TexturedPlanetColorMap.shader" />
+     <None Include="Assets\Prefabs\Planets\MyFirstModule.txt" />
      <None Include="Assets\PlanetaryTerrain\Graphics\Atmosphere\Atmosphere Inverted.shader" />
  <Reference Include="VisualizerStudio">
  <HintPath>C:/Games/DoubleTap/Assets/VisualizerStudio/Scripts/VisualizerStudio.dll</HintPath>

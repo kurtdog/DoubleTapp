@@ -153,6 +153,7 @@
      <Compile Include="Assets\Scripts\Shooter.cs" />
      <Compile Include="Assets\Scripts\Star.cs" />
      <Compile Include="Assets\Scripts\ViewPointScript.cs" />
+     <Compile Include="Assets\ShaderLayer.cs" />
      <Compile Include="Assets\VisualizerStudio\Example Level\KillTimer.cs" />
      <Compile Include="Assets\VisualizerStudio\Example Level\TestBallSpawnScalar.cs" />
      <Compile Include="Assets\VisualizerStudio\Scripts\Base\VisBasePropertyModifier.cs" />
@@ -206,6 +207,7 @@
      <None Include="Assets\PlanetaryTerrain\Resources\Modules\Massive.txt" />
      <None Include="Assets\PlanetaryTerrain\Resources\Modules\AdvancedMountains.txt" />
      <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\TexturedPlanetColorMap.shader" />
+     <None Include="Assets\Prefabs\Planets\MyFirstModule.txt" />
      <None Include="Assets\PlanetaryTerrain\Graphics\Atmosphere\Atmosphere Inverted.shader" />
  <Reference Include="VisualizerStudio">
  <HintPath>C:/Games/DoubleTap/Assets/VisualizerStudio/Scripts/VisualizerStudio.dll</HintPath>

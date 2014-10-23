@@ -103,6 +103,7 @@
      <None Include="Assets\PlanetaryTerrain\Resources\Modules\Massive.txt" />
      <None Include="Assets\PlanetaryTerrain\Resources\Modules\AdvancedMountains.txt" />
      <None Include="Assets\PlanetaryTerrain\Graphics\Shaders\TexturedPlanetColorMap.shader" />
+     <None Include="Assets\Prefabs\Planets\MyFirstModule.txt" />
      <None Include="Assets\PlanetaryTerrain\Graphics\Atmosphere\Atmosphere Inverted.shader" />
  <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>C:/Games/DoubleTap/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
