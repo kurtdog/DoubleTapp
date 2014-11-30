@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class GameController : MonoBehaviour {
 
     public GameObject Ship;
-    public GameObject Shooter;
+    //public GameObject Ship;
     ShipController shipController;
     public GameObject AssetBuilder;
     AssetBuilder assetBuilder;
@@ -48,7 +48,7 @@ public class GameController : MonoBehaviour {
             }
             if (newObject.GetComponent<MeteorShower>() != null)
             {
-                newObject.GetComponent<MeteorShower>().Shooter = Shooter;
+                newObject.GetComponent<MeteorShower>().Shooter = Ship;
             }
         }
         
@@ -64,7 +64,7 @@ public class GameController : MonoBehaviour {
         //opposite = tan(45)*newObjectDistance
         //x = opposite, or y = opposite
         //Or maybe just have a public var for min and max x and y offset.
-        Vector3 position = Shooter.transform.position + Ship.transform.forward * Random.Range(newObjectDistanceMin, newObjectDistanceMax);
+        Vector3 position = Ship.transform.position + Ship.transform.forward * Random.Range(newObjectDistanceMin, newObjectDistanceMax);
 
         return position;
     }
@@ -73,7 +73,7 @@ public class GameController : MonoBehaviour {
     {
         foreach (GameObject generatedObject in generatedObjects)
         {
-            if (Vector3.Distance(Shooter.transform.position, generatedObject.transform.position) < newObjectDistanceMax)
+            if (Vector3.Distance(Ship.transform.position, generatedObject.transform.position) < newObjectDistanceMax)
             {
                 return true;
             }

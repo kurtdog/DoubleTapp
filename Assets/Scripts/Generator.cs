@@ -16,10 +16,15 @@ public abstract class Generator : MonoBehaviour {
 
 	public abstract void Pop(); // to be implemented by sublclasses
 
-	void Start()
-	{
-		spawnedObjects = new List<GameObject>();
-	}
+    void Start()
+    {
+        ParentStart();
+    }
+    public void ParentStart()
+    {
+        spawnedObjects = new List<GameObject>();
+    }
+
 
 	void Update()
 	{
@@ -27,6 +32,13 @@ public abstract class Generator : MonoBehaviour {
 		ParentUpdate();
 
 	}
+
+
+
+
+
+
+
 	// Update is called once per frame
 	//this way child classes can call this class if they need to ovveride the Update Class
 	public void ParentUpdate () {

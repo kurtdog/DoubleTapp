@@ -2,12 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class ThirdPersonMovement
+{
+    public float xLerpSpeed;
+    public float yLerpSpeed;
+    public float zLerpSpeed;
+    public float hyperLerpSpeed;
+
+    public float xAxisLerpSpeed;
+    public float yAxisLerpSpeed;
+    public float zAxisLerpSpeed;
+    //used to keep angles from being 0, it causes errors with the lerp system.
+    public float angleThreshold;
+}
+
+
 public class CameraScript : MonoBehaviour {
 
 	public GameObject Ship;
 	private GameObject ShooterTarget;
 	public GameObject ViewPointNetwork;
 	public GameObject currentView;
+    public ThirdPersonMovement thirdPersonMovement;
 	public float adjustmentSpeed;
 	public float movementSpeed;
 	public float lerpSpeed;
@@ -26,6 +43,20 @@ public class CameraScript : MonoBehaviour {
 	private float yaw;
 	private float lastYaw;
     private float lastRoll;
+
+    //public int startLerpThreshold; // distance at which we follow the ship directly;
+
+
+    float lastVelocity;
+    Vector3 lastOffset;
+    float velocityX;
+    float velocityY;
+    float velocityZ;
+
+    float xOffset;
+    float yOffset;
+    float zOffset;
+    float initialAngleX;
     //private float lastPitch;
 
 	public bool invertedX;
@@ -37,6 +68,7 @@ public class CameraScript : MonoBehaviour {
 
 	//public enum Viewpoint{top,sideR,sideL,thirdPerson,firstPerson};
 	public float distanceFromShooter;
+    
 	Vector3 offset;
 
 	// Use this for initialization
@@ -47,22 +79,98 @@ public class CameraScript : MonoBehaviour {
 		currentView = thirdPersonView;
 		SwitchViewPoints(currentView); // switch to our selected viewpoint
 		shipController = Ship.GetComponent<ShipController>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
 
-	
- 
+        offset = this.transform.position - Ship.transform.position;
+        Vector3 desiredPosition = Ship.transform.position + Ship.transform.right * offset.x + Ship.transform.up * offset.y + Ship.transform.forward * offset.z;
+        xOffset = desiredPosition.x;
+        yOffset = desiredPosition.y;
+        zOffset = desiredPosition.z;
+
+        initialAngleX = this.transform.eulerAngles.x;
+	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
         //TODO: turn this off for the menu screen
-		FollowShip();//follow the player's position
-        
+        FollowShip();//follow the player's position
+
+        HandleInput();
+
+    }
+
+    void LateUpdate()
+    {
+        if (currentView == thirdPersonView)
+        {
+            FollowPlayer();
+        }
+
+    }
+
+    void FollowPlayer()
+    {
+        Vector3 desiredPosition = Ship.transform.position + Ship.transform.right * offset.x + Ship.transform.up * offset.y + Ship.transform.forward * offset.z;
+        //this.transform.position = target.transform.position + offset;
+
+        if (Input.GetButton("HyperThrust"))
+        {
+            xOffset = Mathf.Lerp(xOffset, desiredPosition.x, thirdPersonMovement.hyperLerpSpeed * Time.fixedDeltaTime);
+            yOffset = Mathf.Lerp(yOffset, desiredPosition.y, thirdPersonMovement.hyperLerpSpeed * Time.fixedDeltaTime);
+            zOffset = Mathf.Lerp(zOffset, desiredPosition.z, thirdPersonMovement.hyperLerpSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            xOffset = Mathf.Lerp(xOffset, desiredPosition.x, thirdPersonMovement.xLerpSpeed * Time.fixedDeltaTime);
+            yOffset = Mathf.Lerp(yOffset, desiredPosition.y, thirdPersonMovement.yLerpSpeed * Time.fixedDeltaTime);
+            zOffset = Mathf.Lerp(zOffset, desiredPosition.z, thirdPersonMovement.zLerpSpeed * Time.fixedDeltaTime);
+        }
+
+        this.transform.position = new Vector3(xOffset, yOffset, zOffset);//
 
 
-		HandleInput();
+        LerpAngle();
+    }
 
-	}
+    void LerpAngle()
+    {
+        // get the lookatVector
+        Vector3 lookAt = (Ship.transform.position - this.transform.position).normalized;
+        //lerp the x,y, and z components of this.transform.forward to match the lookAt x, y, and z
+        float xAngle = Mathf.SmoothDampAngle(this.transform.forward.x, lookAt.x, ref velocityX, thirdPersonMovement.xAxisLerpSpeed * Time.fixedDeltaTime);
+        float yAngle = Mathf.SmoothDampAngle(this.transform.forward.y, lookAt.y, ref velocityY, thirdPersonMovement.yAxisLerpSpeed * Time.fixedDeltaTime);
+        float zAngle = Mathf.SmoothDampAngle(this.transform.forward.z, lookAt.z, ref velocityZ, thirdPersonMovement.zAxisLerpSpeed * Time.fixedDeltaTime);
+        this.transform.forward = new Vector3(xAngle, yAngle, zAngle);
 
+
+        //Rotate around the z axis to keep the camera.up close to the target.up
+        float deltaZ = (Ship.transform.eulerAngles.z - this.transform.eulerAngles.z);
+        float desiredAngleZ = Ship.transform.eulerAngles.z;
+        float currentZ = Mathf.Lerp(this.transform.eulerAngles.z, desiredAngleZ, thirdPersonMovement.zAxisLerpSpeed);
+        //Debug.Log ("desiredZ: "  + desiredAngleZ + " currentZ: " + currentZ  + " deltaZ: " + deltaZ);
+        this.transform.rotation = Quaternion.Euler(this.transform.eulerAngles.x, this.transform.eulerAngles.y, currentZ);//Quaternion.Euler(currentX, currentY, currentZ);
+
+
+    }
+
+
+    //follow the player's xyz position
+    void FollowShip()
+    {
+        if (!shipController.lockedOn)
+        {
+            currentView = thirdPersonView;
+        }
+
+
+        if (currentView != thirdPersonView)
+        {
+            transform.position = currentView.transform.position;
+            AdjustDistance(); // adjust out distance so that both items
+        }
+
+    }
 	void AdjustDistance()
 	{
 		if(shipController.lockedOn)
@@ -111,47 +219,16 @@ public class CameraScript : MonoBehaviour {
 			cameraDistance = shipToTarget/.5f;
 
 		}
-			//Vector3 goalPosition = ;// the position we want to be in, "cameraDistance" away from the shooterSip, in the forward axis of our camera
-
-
 
 		//Debug.Log("cameraDist: " + cameraDistance);
 		//hardsetCamera
 		Vector3 midpoint =Ship.transform.position + Ship.transform.forward*shipToTarget/2; // halfway between the ship and it's target, 
 		currentView.transform.position = midpoint - this.transform.forward*(cameraDistance); // + z distance
-		/*
-		 //Lerp Camera 
-		if(distanceFromShip < cameraDistance)
-		{
-			//lerp away
-			transform.position = Vector3.Lerp(transform.position,transform.position+this.transform.forward*cameraDistance);
-		}
-		else{
-			//lerp towards
-		}
-		*/
+
 
 	}
 
-	//follow the player's xyz position
-	void FollowShip()
-	{	
-		if(!shipController.lockedOn)
-		{
-			currentView = thirdPersonView;
-		}
 
-
-		if(currentView == thirdPersonView)
-		{
-			transform.position = Ship.transform.position - (Camera.main.transform.rotation * offset);
-		}
-		else{
-			transform.position = currentView.transform.position;
-			AdjustDistance(); // adjust out distance so that both items
-		}
-
-	}
 
 
 	//Slowly Lerp Back towards thirdPersonView
@@ -333,11 +410,9 @@ public class CameraScript : MonoBehaviour {
 			
 		}
 		else{
-           
-            if (!Input.GetButton("SlowAim"))
-            {
-                LerpRotation();
-            }
+         
+            LerpRotation();
+            
 		}
 		//Camera.main.transform.LookAt(ShooterShip.transform,this.transform.up);
 	}

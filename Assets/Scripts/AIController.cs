@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class AIController : MonoBehaviour {
 
 	public GameObject PlayerShip;
-	public Transform ShooterShipTransform;
+	//public Transform PlayerShip.transform;
     public List<Behavior> behaviors;
 
     //Attacking
@@ -87,10 +87,10 @@ public class AIController : MonoBehaviour {
         spawnTimer += Time.fixedDeltaTime;
 
         unloadTimer += Time.fixedDeltaTime;
-            
-        
 
-		distance = Vector3.Distance(this.transform.position,ShooterShipTransform.position);
+
+
+        distance = Vector3.Distance(this.transform.position, PlayerShip.transform.position);
 
         HandleBehaviors();
 
@@ -195,9 +195,6 @@ public class AIController : MonoBehaviour {
                 GameObject enemy = Instantiate(enemyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation) as GameObject;
                 //Debug.Log("Spawning at : " + spawnPoint.name);
                 enemy.GetComponent<AIController>().setShip(this.PlayerShip);
-                enemy.GetComponent<AIController>().setShooter(this.ShooterShipTransform);
-                
-
 
                 Vector3 f = enemy.transform.forward * (enemy.GetComponent<AIController>().acceleration);
                 //bullet.GetComponent<Projectile>().force = f;
@@ -226,24 +223,25 @@ public class AIController : MonoBehaviour {
 		{
             if(shotCount < shotPointNetwork.points.Count)
             {
-            Debug.Log("Shooting");
-            GameObject shotPoint = shotPointNetwork.points[shotCount];
-            if (shotPoint.activeSelf)
-            {
-                GameObject bullet = Instantiate(Projectile, shotPoint.transform.position, shotPoint.transform.rotation) as GameObject;
-                bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
+                Debug.Log("Shooting");
+                GameObject shotPoint = shotPointNetwork.points[shotCount];
+                if (shotPoint.activeSelf)
+                {
+                    this.GetComponent<AudioScript>().PlayAudio(); // put this line wherever you want to play the sound
+                    GameObject bullet = Instantiate(Projectile, shotPoint.transform.position, shotPoint.transform.rotation) as GameObject;
+                    bullet.GetComponent<Projectile>().setParentGameObject(this.gameObject);
 
-                Vector3 shotDirection = ShooterShipTransform.transform.position - shotPoint.transform.position;
-                bullet.transform.forward = shotDirection;
+                    Vector3 shotDirection = PlayerShip.transform.transform.position - shotPoint.transform.position;
+                    bullet.transform.forward = shotDirection;
 
-                Vector3 f = shotDirection * (bullet.GetComponent<Projectile>().speed + Mathf.Abs(this.rigidbody.velocity.magnitude));
-                //bullet.GetComponent<Projectile>().force = f;
-                //Debug.Log("adding force f: " + f);
-                bullet.rigidbody.AddForce(f);
-                //bullet.rigidbody.velocity = f;
-                projectiles.Add(bullet);
-                shotCount++;
-            }
+                    Vector3 f = shotDirection * (bullet.GetComponent<Projectile>().speed + Mathf.Abs(this.rigidbody.velocity.magnitude));
+                    //bullet.GetComponent<Projectile>().force = f;
+                    //Debug.Log("adding force f: " + f);
+                    bullet.rigidbody.AddForce(f);
+                    //bullet.rigidbody.velocity = f;
+                    projectiles.Add(bullet);
+                    shotCount++;
+                }
             }
             else
             {
@@ -261,7 +259,7 @@ public class AIController : MonoBehaviour {
 	{
 		//Debug.Log("Flying");
         Vector3 targetDirection = PlayerShip.transform.position - this.transform.position;
-        this.transform.LookAt(ShooterShipTransform.transform.position); // LookAt the target
+        this.transform.LookAt(PlayerShip.transform.transform.position); // LookAt the target
 
 	}
     void FlyStraight()
@@ -277,8 +275,5 @@ public class AIController : MonoBehaviour {
         this.PlayerShip = ship;
     }
 
-    void setShooter(Transform shooter)
-    {
-        this.ShooterShipTransform = shooter;
-    }
+
 }

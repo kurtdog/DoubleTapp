@@ -14,6 +14,7 @@ public class Map : MonoBehaviour {
 	public int mapEndRadius;
 
 	public bool displayMap;
+    private bool lastDisplayMap; //last state of the displayMap boolean
 
 
 	private float minDistance = 10000000000; // start really high
@@ -45,7 +46,13 @@ public class Map : MonoBehaviour {
 			//TODO: if not active, set active
 			//TODO: if uncheck, set back to un-active
 		}
+        if (lastDisplayMap && !displayMap) // if we had the mapp toggled, but just toggled it off
+        {
+            HideMap();
+            //Debug.Log("hiding map");
+        }
 
+        lastDisplayMap = displayMap;
         lastMapObjectsSize = mapObjects.Count;
 	}
 
@@ -66,7 +73,7 @@ public class Map : MonoBehaviour {
                 guiPopups.Add(guiPopup);
                 guiPopup.GetComponent<MeshRenderer>().enabled = false;
                  * */
-                GameObject guiPopup = mapObject.GetComponent<MapObject>().guiPopup;
+                GameObject guiPopup = mapObject.GetComponent<MapObject>().guiPopupPrefab;
                 if(!guiPopups.Contains(guiPopup))
                 {
                     guiPopups.Add(guiPopup);
@@ -129,6 +136,20 @@ public class Map : MonoBehaviour {
 		}
 		
 	}
+
+    void HideMap()
+    {
+
+        foreach (GameObject guiPopup in guiPopups)
+        {
+            if (guiPopup.GetComponent<MeshRenderer>().enabled == true)
+            {
+                guiPopup.GetComponent<MeshRenderer>().enabled = false;
+            }
+        }
+
+    }
+
 
 	void CheckOnScreen()
 	{

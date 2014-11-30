@@ -21,12 +21,17 @@ public class AsteroidBeltSc : Generator {
 	//private Vector3 startPposl;
 
 	// Use this for initialization
+    void Start()
+    {
+        ParentStart();
+        this.transform.rotation = Random.rotation;
 
+    }
 	
 	// Update is called once per frame
 	void  Update () {
 		ParentUpdate();
-		this.transform.RotateAround(this.transform.position,this.transform.forward,BeltSpinSpeed*Time.fixedDeltaTime);
+		this.transform.RotateAround(this.transform.position,this.transform.up,BeltSpinSpeed*Time.fixedDeltaTime);
 	}
 
 	public override void Pop()
@@ -46,7 +51,7 @@ public class AsteroidBeltSc : Generator {
 		//Vector3 randomLocation = Random.insideUnitSphere*distance this.transform.forward;
 		//Vector3 randomLocation = this.transform.position + Random.insideUnitSphere.normalized*distance;
         Vector2 randomInUnitCircle = Random.insideUnitCircle.normalized * distance;
-        Vector3 randomLocation = this.transform.position + this.transform.right * randomInUnitCircle.x + this.transform.up * randomInUnitCircle.y;
+        Vector3 randomLocation = this.transform.position + this.transform.right * randomInUnitCircle.x + this.transform.forward * randomInUnitCircle.y;
 
 		//Quaternion randomRotation = Random.rotation;
 
@@ -61,7 +66,7 @@ public class AsteroidBeltSc : Generator {
 
 
 		
-		this.transform.LookAt(upAxis);
+		//this.transform.LookAt(upAxis);
 	}
 
 

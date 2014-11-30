@@ -51,7 +51,7 @@ public class MusicManager : MonoBehaviour {
         }
          * */
 
-            soundArcs = new List<GameObject>();
+        soundArcs = new List<GameObject>();
 		samples = new float[segPerLine]; //allocate space for audio samples
 		CreateSoundArcs(numLines);
 
@@ -105,9 +105,17 @@ public class MusicManager : MonoBehaviour {
 		//Debug.Log("soundArcs: " + soundArcs.Count);
 	}
 
+    
     public void addAudioSource(AudioClip audioClip)
     {
         //new audiosource
+        //AudioSource audioSource = this.gameObject.AddComponent<AudioSource>();
+        //Invoke("RemoveAudio",audioSource.audio.)
+    }
+
+    void RemoveAudio(AudioSource audioSource)
+    {
+        Destroy(audioSource);
     }
 
     public void FadeRemovableBackground(GameObject audioTrigger)
